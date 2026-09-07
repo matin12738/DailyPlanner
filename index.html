@@ -1,0 +1,3541 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>دفترچه | پلنر هوشمند زندگی</title>
+    <meta name="description" content="سیستم مدیریت اهداف، پروژه‌ها، عادت‌ها، روتین‌ها، کارهای روزانه و تایمر فوکوس با تقویم شمسی و ذخیره‌سازی پایدار" />
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js">
+    </script>
+    <style>
+        /* ============================================================
+               دفترچه — Refactored & Responsive v12.0
+               تمام‌ ویژگی‌ها حفظ شده، اما ساختار و ریسپانسیو بهبود یافته
+               ============================================================ */
+
+        /* ----- Variables (تم) ----- */
+        :root {
+            --font-main: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+
+            --fs-xs: 0.7rem;
+            --fs-sm: 0.8rem;
+            --fs-base: 0.875rem;
+            --fs-md: 0.95rem;
+            --fs-lg: 1.1rem;
+            --fs-xl: 1.4rem;
+            --fs-2xl: 1.8rem;
+            --fs-timer: clamp(2rem, 6vw, 2.8rem);
+
+            --sp-1: 0.25rem;
+            --sp-2: 0.5rem;
+            --sp-3: 0.75rem;
+            --sp-4: 1rem;
+            --sp-5: 1.25rem;
+            --sp-6: 1.5rem;
+            --sp-8: 2rem;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --fast: 150ms var(--ease);
+            --base: 250ms var(--ease);
+            --slow: 400ms var(--ease);
+
+            /* رنگ‌بندی اصلی */
+            --paper: #f1ead9;
+            --paper-card: #faf6ec;
+            --paper-line: #ddd0b0;
+            --ink: #2a2118;
+            --ink-soft: #6f624f;
+            --ink-faint: #a99d84;
+            --saffron: #bb4310;
+            --saffron-hover: #9c380c;
+            --saffron-soft: rgba(187, 67, 16, 0.12);
+            --pistachio: #55744a;
+            --pistachio-soft: rgba(85, 116, 74, 0.13);
+            --ochre: #8f640f;
+            --ochre-soft: rgba(179, 128, 20, 0.15);
+            --ruby: #9c2b2b;
+            --ruby-soft: rgba(156, 43, 43, 0.12);
+            --lapis: #2f4f7a;
+            --lapis-soft: rgba(47, 79, 122, 0.13);
+
+            --shadow-card: 0 1px 0 var(--paper-line), 0 6px 16px -10px rgba(42, 33, 24, 0.25);
+            --shadow-pop: 0 18px 40px -14px rgba(42, 33, 24, 0.35);
+            --transition: all var(--base);
+        }
+
+        [data-theme="dark"] {
+            --paper: #17130f;
+            --paper-card: #211b14;
+            --paper-line: #3c3225;
+            --ink: #f1ead9;
+            --ink-soft: #b8a98c;
+            --ink-faint: #7a6d57;
+            --saffron: #e08147;
+            --saffron-hover: #ef9660;
+            --saffron-soft: rgba(224, 129, 71, 0.16);
+            --pistachio: #8fb47f;
+            --pistachio-soft: rgba(143, 180, 127, 0.16);
+            --ochre: #d8a53e;
+            --ochre-soft: rgba(216, 165, 62, 0.16);
+            --ruby: #d9716b;
+            --ruby-soft: rgba(217, 113, 107, 0.15);
+            --lapis: #7fa1cf;
+            --lapis-soft: rgba(127, 161, 207, 0.16);
+            --shadow-card: 0 1px 0 var(--paper-line), 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+            --shadow-pop: 0 20px 50px -14px rgba(0, 0, 0, 0.6);
+        }
+
+        /* ----- Reset & Base ----- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--paper);
+            background-image: radial-gradient(var(--paper-line) 0.6px, transparent 0.6px);
+            background-size: 22px 22px;
+            color: var(--ink);
+            font-family: var(--font-main);
+            font-size: var(--fs-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background-color var(--base), color var(--base);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--ink-faint);
+            border-radius: var(--radius-full);
+        }
+
+        a,
+        button,
+        input,
+        select,
+        textarea,
+        [tabindex] {
+            &:focus-visible {
+                outline: 3px solid var(--saffron);
+                outline-offset: 2px;
+                border-radius: var(--radius-sm);
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--ink-soft);
+        }
+        .mt-2 {
+            margin-top: var(--sp-2);
+        }
+
+        /* ----- App Shell ----- */
+        .app-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Rail دسکتاپ */
+        .rail {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--sp-2);
+            width: 70px;
+            flex-shrink: 0;
+            padding: var(--sp-5) 0;
+            background: var(--paper-card);
+            border-inline-start: 1px dashed var(--paper-line);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 200;
+        }
+
+        @media (min-width: 1024px) {
+            .rail {
+                display: flex;
+            }
+        }
+
+        .rail-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background: var(--saffron);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: var(--fs-md);
+            margin-bottom: var(--sp-4);
+        }
+
+        .rail-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-md);
+            color: var(--ink-soft);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        .rail-btn i {
+            font-size: 1rem;
+        }
+
+        .rail-btn:hover {
+            background: var(--saffron-soft);
+            color: var(--saffron);
+        }
+
+        .rail-spacer {
+            flex: 1;
+        }
+
+        .rail-foot {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-2);
+            align-items: center;
+        }
+
+        /* ----- Container اصلی ----- */
+        .app-container {
+            flex: 1;
+            min-width: 0;
+            max-width: 1500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-4);
+            padding: var(--sp-3) var(--sp-3) calc(5rem + env(safe-area-inset-bottom));
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                padding: var(--sp-4) var(--sp-4) var(--sp-4);
+            }
+        }
+
+        /* ----- بارگذاری ----- */
+        .app-loading {
+            position: fixed;
+            inset: 0;
+            background: var(--paper);
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-4);
+            color: var(--ink-soft);
+            font-weight: 700;
+        }
+
+        .app-loading.hidden {
+            display: none;
+        }
+
+        /* ----- هدر ----- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--sp-3) var(--sp-4);
+            background: var(--paper-card);
+            border: 1px solid var(--paper-line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            position: sticky;
+            top: var(--sp-2);
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: var(--sp-3);
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+            font-size: var(--fs-lg);
+            font-weight: 800;
+        }
+
+        .brand-title i {
+            color: var(--saffron);
+        }
+
+        .brand-badge {
+            font-size: var(--fs-xs);
+            background: var(--saffron-soft);
+            color: var(--saffron);
+            padding: var(--sp-1) var(--sp-2);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+        }
+
+        .sync-status,
+        .backup-status {
+            font-size: var(--fs-xs);
+            color: var(--ink-soft);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--sp-1);
+        }
+
+        .sync-status.saved i {
+            color: var(--pistachio);
+        }
+        .sync-status.saving i {
+            color: var(--ochre);
+        }
+        .sync-status.error i {
+            color: var(--ruby);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+            flex-wrap: wrap;
+        }
+
+        /* ----- دکمه‌ها و ورودی‌ها ----- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-1);
+            padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: var(--paper-card);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+            min-height: 38px;
+        }
+
+        .btn:hover {
+            border-color: var(--saffron);
+            color: var(--saffron);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: var(--saffron);
+            color: #fff;
+            border-color: var(--saffron);
+        }
+
+        .btn-primary:hover {
+            background: var(--saffron-hover);
+            color: #fff;
+        }
+
+        .btn-danger {
+            color: var(--ruby);
+        }
+
+        .btn-danger:hover {
+            background: var(--ruby);
+            color: #fff;
+            border-color: var(--ruby);
+        }
+
+        .btn-icon-only {
+            padding: var(--sp-2);
+            min-width: 38px;
+            min-height: 38px;
+        }
+
+        .search-input,
+        .select-input {
+            padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-sm);
+            outline: none;
+            transition: var(--transition);
+            min-height: 38px;
+        }
+
+        .search-input:focus,
+        .select-input:focus {
+            border-color: var(--saffron);
+            box-shadow: 0 0 0 3px var(--saffron-soft);
+        }
+
+        /* ----- نوار تاریخ (خط‌کش هفته) ----- */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--sp-3);
+            flex-wrap: wrap;
+            background: var(--paper-card);
+            padding: var(--sp-3);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--paper-line);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+
+        .day-tabs {
+            display: flex;
+            gap: var(--sp-2);
+            overflow-x: auto;
+            padding-bottom: var(--sp-1);
+            width: 100%;
+            max-width: 700px;
+            flex: 1;
+        }
+
+        .day-tab {
+            padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 700;
+            font-size: var(--fs-sm);
+            transition: var(--transition);
+            color: var(--ink-soft);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .day-tab:hover {
+            border-color: var(--saffron);
+            color: var(--saffron);
+        }
+
+        .day-tab.active {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink);
+        }
+
+        [data-theme="dark"] .day-tab.active {
+            background: var(--saffron);
+            border-color: var(--saffron);
+            color: #1a1108;
+        }
+
+        .day-tab.is-today {
+            border-color: var(--saffron);
+        }
+
+        .day-tab .today-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--saffron);
+            margin-top: 1px;
+        }
+
+        .day-tab.active .today-dot {
+            background: var(--paper);
+        }
+
+        .date-controls {
+            display: flex;
+            gap: var(--sp-2);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ----- منوی انتخاب تاریخ شمسی ----- */
+        .jalali-picker-wrap {
+            position: relative;
+        }
+
+        .jalali-popover {
+            position: absolute;
+            top: calc(100% + 8px);
+            inset-inline-end: 0;
+            z-index: 300;
+            background: var(--paper-card);
+            border: 1px solid var(--paper-line);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-pop);
+            padding: var(--sp-3);
+            display: none;
+            flex-direction: column;
+            gap: var(--sp-2);
+            min-width: 240px;
+        }
+
+        .jalali-popover.active {
+            display: flex;
+        }
+
+        .jalali-popover-row {
+            display: flex;
+            gap: var(--sp-1);
+        }
+
+        .jalali-popover-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .jalali-popover-field select {
+            width: 100%;
+        }
+
+        /* ----- شبکه بنتو (داشبورد) ----- */
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--sp-4);
+            align-items: start;
+        }
+
+        @media (min-width: 768px) {
+            .main-dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .timer-section {
+                grid-column: span 2;
+            }
+
+            .tasks-section {
+                grid-column: span 2;
+            }
+
+            .right-sidebar {
+                grid-column: span 2;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--sp-4);
+            }
+
+            .journal-brain {
+                grid-column: span 2;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--sp-4);
+            }
+
+            .insights-section {
+                grid-column: span 2;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--sp-4);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-dashboard {
+                grid-template-columns: repeat(12, 1fr);
+            }
+
+            .timer-section {
+                grid-column: span 3;
+            }
+
+            .tasks-section {
+                grid-column: span 6;
+            }
+
+            .right-sidebar {
+                grid-column: span 3;
+                display: flex;
+                flex-direction: column;
+                gap: var(--sp-4);
+            }
+
+            .journal-brain {
+                grid-column: span 12;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--sp-4);
+            }
+
+            .insights-section {
+                grid-column: span 12;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--sp-4);
+            }
+        }
+
+        /* ----- کارت‌ها (سبک برگه‌ها) ----- */
+        .card-section {
+            background: var(--paper-card);
+            border-radius: var(--radius-md);
+            padding: var(--sp-4);
+            border: 1px solid var(--paper-line);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-3);
+            transition: box-shadow var(--base), transform var(--base);
+            position: relative;
+        }
+
+        .card-section:hover {
+            box-shadow: var(--shadow-pop);
+        }
+
+        .card-section::before {
+            content: '';
+            position: absolute;
+            inset-inline-start: 0;
+            top: var(--sp-4);
+            bottom: var(--sp-4);
+            width: 3px;
+            border-radius: var(--radius-full);
+            background: var(--paper-line);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--sp-2);
+            flex-wrap: wrap;
+        }
+
+        .card-title {
+            font-size: var(--fs-md);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+        }
+
+        .card-title i {
+            color: var(--saffron);
+            width: 1.1em;
+            text-align: center;
+        }
+
+        /* ----- لیست آیتم‌ها با خط کش ----- */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-2);
+            min-height: 60px;
+        }
+
+        .task-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-1);
+            padding: var(--sp-2) var(--sp-3);
+            background: var(--paper);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            border-inline-end: 4px solid var(--paper-line);
+            transition: var(--transition);
+            animation: fadeIn var(--base) ease-in-out;
+            position: relative;
+        }
+
+        .task-item:hover {
+            border-color: var(--saffron);
+        }
+
+        .task-item.done {
+            opacity: 0.55;
+        }
+
+        .task-item.done .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+        }
+
+        .task-item.priority-high {
+            border-inline-end-color: var(--ruby);
+        }
+        .task-item.priority-med {
+            border-inline-end-color: var(--ochre);
+        }
+        .task-item.priority-low {
+            border-inline-end-color: var(--pistachio);
+        }
+
+        .task-row-main {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+            flex-wrap: wrap;
+        }
+
+        .checkbox-hit-area {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-custom {
+            width: 19px;
+            height: 19px;
+            border-radius: 5px;
+            cursor: pointer;
+            accent-color: var(--saffron);
+            flex-shrink: 0;
+        }
+
+        .task-title {
+            flex: 1;
+            min-width: 100px;
+            border: none;
+            background: transparent;
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-sm);
+            outline: none;
+            font-weight: 600;
+            padding: var(--sp-1) 0;
+        }
+
+        .badge {
+            font-size: var(--fs-xs);
+            padding: var(--sp-1) var(--sp-2);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--sp-1);
+            white-space: nowrap;
+        }
+
+        .badge-cat {
+            background: var(--saffron-soft);
+            color: var(--saffron);
+        }
+        .badge-prio-high {
+            background: var(--ruby-soft);
+            color: var(--ruby);
+        }
+        .badge-prio-med {
+            background: var(--ochre-soft);
+            color: var(--ochre);
+        }
+        .badge-prio-low {
+            background: var(--pistachio-soft);
+            color: var(--pistachio);
+        }
+        .badge-recur {
+            background: var(--lapis-soft);
+            color: var(--lapis);
+        }
+        .badge-project {
+            background: var(--lapis-soft);
+            color: var(--lapis);
+        }
+
+        .streak-badge {
+            font-size: var(--fs-xs);
+            color: var(--ochre);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-1);
+            font-weight: 700;
+        }
+
+        .task-row-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-1);
+            flex-shrink: 0;
+            margin-inline-start: auto;
+        }
+
+        .task-advanced {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--sp-2);
+            padding-top: var(--sp-2);
+            border-top: 1px dashed var(--paper-line);
+        }
+
+        .task-advanced.open {
+            display: grid;
+        }
+
+        .task-advanced-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-1);
+        }
+
+        .task-advanced-field label {
+            font-size: var(--fs-xs);
+            color: var(--ink-soft);
+            font-weight: 700;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: var(--ink-faint);
+            flex-shrink: 0;
+            touch-action: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--sp-1);
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .progress-bar-container {
+            background: var(--paper);
+            border-radius: var(--radius-full);
+            height: 8px;
+            overflow: hidden;
+            width: 100%;
+            border: 1px solid var(--paper-line);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--saffron);
+            transition: width var(--slow) ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: var(--sp-3);
+        }
+
+        .stat-card {
+            background: var(--paper);
+            border: 1px solid var(--paper-line);
+            padding: var(--sp-3);
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--saffron);
+        }
+
+        .stat-val {
+            font-size: var(--fs-lg);
+            font-weight: 800;
+            color: var(--saffron);
+        }
+
+        .stat-lbl {
+            font-size: var(--fs-xs);
+            color: var(--ink-soft);
+            margin-top: var(--sp-1);
+        }
+
+        /* ----- ژورنال و یادداشت ----- */
+        .journal-box {
+            width: 100%;
+            min-height: 80px;
+            padding: var(--sp-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-sm);
+            resize: vertical;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .journal-box:focus {
+            border-color: var(--saffron);
+            box-shadow: 0 0 0 3px var(--saffron-soft);
+        }
+
+        .journal-input {
+            width: 100%;
+            padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-sm);
+            outline: none;
+            transition: var(--transition);
+            min-height: 38px;
+        }
+
+        .journal-input:focus {
+            border-color: var(--saffron);
+            box-shadow: 0 0 0 3px var(--saffron-soft);
+        }
+
+        /* ----- مودال ----- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 15, 8, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--base) ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-body {
+            background: var(--paper-card);
+            border-radius: var(--radius-lg);
+            padding: var(--sp-6);
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--paper-line);
+            box-shadow: var(--shadow-pop);
+            transform: translateY(20px);
+            transition: transform var(--base) ease;
+        }
+
+        .modal-overlay.active .modal-body {
+            transform: translateY(0);
+        }
+
+        /* ----- Toast ----- */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            inset-inline-start: 20px;
+            background: var(--ink);
+            color: var(--paper);
+            padding: var(--sp-3) var(--sp-5);
+            border-radius: var(--radius-full);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            box-shadow: var(--shadow-pop);
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all var(--base) cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2000;
+        }
+
+        [data-theme="dark"] .toast-notification {
+            background: var(--saffron);
+            color: #1a1108;
+        }
+
+        .toast-notification.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--ink-soft);
+            padding: var(--sp-4);
+            font-style: italic;
+        }
+
+        /* ----- تایمر (دایره) ----- */
+        .timer-dial-wrap {
+            display: flex;
+            justify-content: center;
+            padding: var(--sp-2) 0;
+        }
+
+        .timer-dial {
+            --progress: 0;
+            position: relative;
+            width: clamp(150px, 60%, 190px);
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--saffron) calc(var(--progress) * 1%), var(--paper-line) 0);
+        }
+
+        .timer-dial::before {
+            content: '';
+            position: absolute;
+            inset: 9px;
+            border-radius: 50%;
+            background: var(--paper-card);
+        }
+
+        .timer-display {
+            position: relative;
+            z-index: 1;
+            font-size: var(--fs-timer);
+            font-weight: 800;
+            text-align: center;
+            color: var(--ink);
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-mode-tabs {
+            display: flex;
+            gap: var(--sp-1);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-mode-tab {
+            padding: var(--sp-1) var(--sp-3);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: var(--fs-xs);
+            transition: var(--transition);
+            color: var(--ink-soft);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+        }
+
+        .timer-mode-tab.active {
+            background: var(--saffron);
+            color: #fff;
+            border-color: var(--saffron);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: var(--sp-2);
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .timer-round-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            color: var(--ink);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--fs-md);
+            transition: var(--transition);
+        }
+
+        .timer-round-btn:hover {
+            border-color: var(--saffron);
+            transform: translateY(-1px);
+        }
+
+        .timer-round-btn.primary {
+            background: var(--saffron);
+            color: #fff;
+            border-color: var(--saffron);
+        }
+
+        .timer-round-btn.primary:hover {
+            background: var(--saffron-hover);
+        }
+
+        .timer-settings {
+            display: flex;
+            gap: var(--sp-2);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .timer-setting {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-1);
+        }
+
+        .timer-setting label {
+            font-size: var(--fs-xs);
+            color: var(--ink-soft);
+        }
+
+        .timer-setting input {
+            width: 48px;
+            padding: var(--sp-1) var(--sp-2);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--paper-line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: var(--fs-xs);
+            text-align: center;
+            outline: none;
+            min-height: 30px;
+        }
+
+        .timer-setting input:focus {
+            border-color: var(--saffron);
+        }
+
+        /* ----- تقویم ماهانه ----- */
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--sp-1);
+        }
+
+        .month-cell {
+            padding: var(--sp-1) var(--sp-2);
+            text-align: center;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--paper-line);
+            background: var(--paper);
+            transition: var(--transition);
+            position: relative;
+            font-size: var(--fs-xs);
+        }
+
+        .month-cell:hover {
+            border-color: var(--saffron);
+            border-style: solid;
+        }
+
+        .month-cell.today {
+            border-color: var(--saffron);
+            border-style: solid;
+        }
+
+        .month-cell.selected {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink);
+            border-style: solid;
+        }
+
+        [data-theme="dark"] .month-cell.selected {
+            background: var(--saffron);
+            border-color: var(--saffron);
+            color: #1a1108;
+        }
+
+        .month-cell .day-number {
+            font-weight: 700;
+        }
+
+        .month-cell .mini-indicators {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .mini-indicators span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ----- نمودارها ----- */
+        .period-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: var(--sp-3);
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-3);
+        }
+
+        .chart-title {
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            color: var(--ink-soft);
+            margin-bottom: var(--sp-1);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: stretch;
+            gap: var(--sp-1);
+            height: 120px;
+            direction: ltr;
+            padding-top: var(--sp-1);
+        }
+
+        .chart-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            gap: var(--sp-1);
+            height: 100%;
+        }
+
+        .chart-value {
+            min-height: 14px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            color: var(--ink-soft);
+            line-height: 1;
+        }
+
+        .chart-bar-track {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: var(--paper);
+            border-radius: 3px 3px 2px 2px;
+            overflow: hidden;
+            border: 1px solid var(--paper-line);
+        }
+
+        .chart-bar {
+            width: 100%;
+            min-height: 0;
+            background: var(--saffron);
+            border-radius: 2px 2px 1px 1px;
+            transition: height var(--base) ease, opacity var(--fast) ease;
+        }
+
+        .chart-column:hover .chart-bar {
+            opacity: 0.78;
+        }
+
+        .chart-date {
+            min-height: 14px;
+            font-size: var(--fs-xs);
+            color: var(--ink-soft);
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .chart-empty {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+            color: var(--ink-soft);
+            font-size: var(--fs-xs);
+            border: 1px dashed var(--paper-line);
+            border-radius: var(--radius-md);
+            background: var(--paper);
+        }
+
+        /* ----- نوار پایین موبایل ----- */
+        .mobile-tab-bar {
+            display: none;
+            position: fixed;
+            inset-inline: 0;
+            bottom: 0;
+            z-index: 900;
+            justify-content: space-around;
+            align-items: stretch;
+            background: var(--paper-card);
+            border-top: 1px dashed var(--paper-line);
+            padding: var(--sp-1) var(--sp-1) calc(var(--sp-1) + env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 1023px) {
+            .mobile-tab-bar {
+                display: flex;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-tab-bar {
+                display: none !important;
+            }
+        }
+
+        .mobile-tab-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            min-height: 48px;
+            border: none;
+            background: transparent;
+            color: var(--ink-soft);
+            font-family: inherit;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .mobile-tab-btn i {
+            font-size: var(--fs-md);
+        }
+
+        .mobile-tab-btn.active {
+            color: var(--saffron);
+        }
+
+        .mobile-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 3px;
+            background: var(--saffron);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .mobile-tab-btn[aria-current="true"] {
+            background: var(--saffron-soft);
+        }
+
+        /* ----- بهبودهای واکنش‌گرا ----- */
+
+        /* دکمه افزودن کار روی موبایل به صورت FAB */
+        @media (max-width: 767px) {
+            #addTaskBtn {
+                position: fixed;
+                inset-inline-end: var(--sp-3);
+                bottom: calc(4.5rem + var(--sp-3) + env(safe-area-inset-bottom));
+                z-index: 800;
+                width: 56px;
+                height: 56px;
+                padding: 0;
+                border-radius: var(--radius-full);
+                justify-content: center;
+                box-shadow: var(--shadow-pop);
+            }
+
+            #addTaskBtn .btn-label {
+                display: none;
+            }
+
+            #addTaskBtn i {
+                font-size: var(--fs-lg);
+            }
+
+            .toast-notification {
+                bottom: calc(4.75rem + env(safe-area-inset-bottom));
+            }
+
+            /* فیلترها به صورت sheet از پایین */
+            #filterFieldsWrap {
+                display: none;
+            }
+
+            #filterFieldsWrap.sheet-open {
+                display: flex;
+                flex-direction: column;
+                gap: var(--sp-3);
+                position: fixed;
+                inset-inline: 0;
+                bottom: 0;
+                z-index: 1001;
+                background: var(--paper-card);
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                padding: var(--sp-4) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
+                box-shadow: var(--shadow-pop);
+                animation: slideUp var(--base) var(--ease);
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                }
+                to {
+                    transform: translateY(0);
+                }
+            }
+
+            #filterFieldsWrap.sheet-open .select-input {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            #filterSheetBackdrop.active {
+                display: flex;
+                align-items: flex-end;
+            }
+
+            #mobileFilterBtn {
+                display: inline-flex !important;
+                min-height: 44px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #mobileFilterBtn,
+            #filterSheetBackdrop {
+                display: none !important;
+            }
+        }
+
+        /* ---- دکمه‌های ریاضی (موبایل) ---- */
+        @media (max-width: 767px) {
+            .btn-icon-only {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            .checkbox-hit-area {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            .drag-handle {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            .day-tab {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            .timer-mode-tab {
+                min-height: 44px;
+                padding: var(--sp-2) var(--sp-4);
+            }
+            .timer-round-btn {
+                width: 54px;
+                height: 54px;
+            }
+        }
+
+        /* هنگام نمایش گروه‌های تب در موبایل */
+        [data-tab-group] {
+            display: none;
+        }
+
+        [data-tab-group].tab-active {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-4);
+        }
+
+        @media (min-width: 768px) {
+            [data-tab-group] {
+                display: flex !important;
+                flex-direction: column;
+                gap: var(--sp-4);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-loading" id="appLoading">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        <span>در حال بارگذاری داده‌ها...</span>
+    </div>
+
+    <div class="app-shell">
+        <!-- ریل دسکتاپ -->
+        <nav class="rail" aria-label="پیمایش سریع بخش‌ها">
+            <div class="rail-mark" aria-hidden="true">د</div>
+            <button class="rail-btn" data-scroll-target="today" aria-label="برو به بخش امروز"><i class="fas fa-list-check"></i><span>امروز</span></button>
+            <button class="rail-btn" data-scroll-target="growth" aria-label="برو به بخش رشد"><i class="fas fa-seedling"></i><span>رشد</span></button>
+            <button class="rail-btn" data-scroll-target="mind" aria-label="برو به بخش ذهن"><i class="fas fa-brain"></i><span>ذهن</span></button>
+            <button class="rail-btn" data-scroll-target="insights" aria-label="برو به بخش تحلیل"><i class="fas fa-chart-pie"></i><span>تحلیل</span></button>
+            <div class="rail-spacer"></div>
+            <div class="rail-foot">
+                <button class="btn btn-icon-only" id="railThemeToggleProxy" aria-hidden="true" tabindex="-1" style="visibility:hidden;width:0;height:0;padding:0;border:0;"></button>
+            </div>
+        </nav>
+
+        <div class="app-container" id="appContainer" style="visibility:hidden;">
+            <!-- هدر -->
+            <header class="app-header">
+                <div class="brand-title">
+                    <i class="fas fa-feather-pointed"></i>
+                    <span>دفترچه</span>
+                    <span class="brand-badge">v12.0</span>
+                    <span class="sync-status" id="syncStatus" title="وضعیت ذخیره‌سازی"><i class="fas fa-circle"></i> <span id="syncStatusText">ذخیره شده</span></span>
+                    <span class="backup-status" id="backupStatus"><i class="fas fa-hdd"></i> <span id="backupStatusText">بدون نسخه پشتیبان</span></span>
+                </div>
+                <div class="controls-group">
+                    <button class="btn btn-icon-only" id="undoBtn" aria-label="واکشی"><i class="fas fa-undo"></i></button>
+                    <button class="btn btn-icon-only" id="redoBtn" aria-label="انجام مجدد"><i class="fas fa-redo"></i></button>
+                    <button class="btn" id="exportBtn"><i class="fas fa-file-export"></i> خروجی</button>
+                    <button class="btn" id="importBtn"><i class="fas fa-file-import"></i> ورودی</button>
+                    <input type="file" id="importFileInput" accept="application/json" hidden aria-label="انتخاب فایل پشتیبان برای ورود">
+                    <button class="btn btn-icon-only" id="themeToggle" aria-label="تغییر تم"><i class="fas fa-moon"></i></button>
+                    <button class="btn btn-icon-only" id="backupNowBtn" aria-label="تهیه نسخه پشتیبان فوری"><i class="fas fa-save"></i></button>
+                    <button class="btn btn-danger btn-icon-only" id="resetBtn" aria-label="بازنشانی همه داده‌ها"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </header>
+
+            <!-- نوار تاریخ -->
+            <nav class="nav-bar" aria-label="ناوبری تاریخ" data-tab-group="today" style="display:flex !important; align-items:center !important; flex-direction:row !important">
+                <div style="display:flex; gap:var(--sp-2);">
+                    <button class="btn btn-icon-only" id="prevWeekBtn" aria-label="هفته قبل"><i class="fas fa-chevron-right"></i></button>
+                    <button class="btn btn-icon-only" id="nextWeekBtn" aria-label="هفته بعد"><i class="fas fa-chevron-left"></i></button>
+                </div>
+                <div class="day-tabs" id="dayTabsContainer" role="tablist" aria-label="روزهای هفته" style="align-items: center;justify-content: center;"></div>
+                <div class="date-controls">
+                    <div class="jalali-picker-wrap" id="jalaliPickerWrap">
+                        <button type="button" class="btn" id="jalaliDateBtn" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-calendar-alt"></i> <span id="jalaliDateBtnLabel">انتخاب تاریخ</span>
+                        </button>
+                        <div class="jalali-popover" id="jalaliPopover" role="dialog" aria-label="انتخاب تاریخ شمسی">
+                            <div class="jalali-popover-row">
+                                <div class="jalali-popover-field"><label for="jalaliDaySelect" class="sr-only">روز</label><select id="jalaliDaySelect" class="select-input" aria-label="روز"></select></div>
+                                <div class="jalali-popover-field"><label for="jalaliMonthSelect" class="sr-only">ماه</label><select id="jalaliMonthSelect" class="select-input" aria-label="ماه"></select></div>
+                                <div class="jalali-popover-field"><label for="jalaliYearSelect" class="sr-only">سال</label><select id="jalaliYearSelect" class="select-input" aria-label="سال"></select></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; gap:var(--sp-2);">
+                                <button type="button" class="btn" id="jalaliCancelBtn">انصراف</button>
+                                <button type="button" class="btn btn-primary" id="jalaliGoBtn">برو</button>
+                            </div>
+                        </div>
+                    </div>
+                    <label for="datePickerFallback" class="sr-only">انتخاب تاریخ</label>
+                    <input type="date" id="datePickerFallback" class="search-input hidden" style="padding:0.4rem;">
+                    <button class="btn btn-primary" id="todayBtn">امروز</button>
+                </div>
+            </nav>
+
+            <!-- داشبورد اصلی -->
+            <div class="main-dashboard">
+                <!-- تایمر -->
+                <section class="card-section timer-section" data-tab-group="today">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-stopwatch"></i> فوکوس تایمر</h2>
+                        <button class="btn" id="enableNotifBtn" style="font-size:0.7rem;"><i class="fas fa-bell"></i></button>
+                    </div>
+                    <div class="timer-mode-tabs" role="tablist" aria-label="حالت تایمر">
+                        <button class="timer-mode-tab active" data-mode="work">کار</button>
+                        <button class="timer-mode-tab" data-mode="shortBreak">کوتاه</button>
+                        <button class="timer-mode-tab" data-mode="longBreak">بلند</button>
+                    </div>
+                    <div class="timer-dial-wrap">
+                        <div class="timer-dial" id="timerDial">
+                            <div class="timer-display" id="timerDisplay" aria-live="polite">25:00</div>
+                        </div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-round-btn primary" id="startPauseTimerBtn" aria-label="شروع یا توقف"><i class="fas fa-play" id="startPauseIcon"></i></button>
+                        <button class="timer-round-btn" id="resetTimerBtn" aria-label="بازنشانی"><i class="fas fa-redo-alt"></i></button>
+                        <button class="timer-round-btn" id="skipTimerBtn" aria-label="رد کردن"><i class="fas fa-forward"></i></button>
+                    </div>
+                    <div class="timer-settings">
+                        <div class="timer-setting"><label for="workDuration">کار</label><input type="number" id="workDuration" value="25" min="1" max="120"></div>
+                        <div class="timer-setting"><label for="shortBreakDuration">کوتاه</label><input type="number" id="shortBreakDuration" value="5" min="1" max="60"></div>
+                        <div class="timer-setting"><label for="longBreakDuration">بلند</label><input type="number" id="longBreakDuration" value="15" min="1" max="60"></div>
+                        <div class="timer-setting"><label for="longBreakInterval">تناوب</label><input type="number" id="longBreakInterval" value="4" min="1" max="12"></div>
+                    </div>
+                    <div class="text-center text-muted" style="font-size:0.75rem;"><span id="sessionCounter">۰</span> دور کامل</div>
+                </section>
+
+                <!-- تسک‌ها -->
+                <section class="card-section tasks-section" data-tab-group="today">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-tasks"></i> کارهای <span id="currentDayLabel"></span></h2>
+                        <button class="btn btn-primary" id="addTaskBtn"><i class="fas fa-plus"></i><span class="btn-label">کار جدید</span></button>
+                    </div>
+                    <div class="toolbar" style="display:flex; gap:var(--sp-2); flex-wrap:wrap;">
+                        <input type="text" id="taskSearchInput" class="search-input" placeholder="جستجوی کارها...">
+                        <button class="btn" id="mobileFilterBtn" type="button" style="display:none;"><i class="fas fa-filter"></i> فیلتر <span class="badge badge-cat" id="filterCountBadge" hidden>0</span></button>
+                        <div id="filterFieldsWrap" style="display:flex; gap:var(--sp-2); flex-wrap:wrap;">
+                            <select id="tagFilter" class="select-input" aria-label="فیلتر دسته">
+                                <option value="all">همه دسته‌ها</option>
+                                <option value="uni">دانشگاه</option>
+                                <option value="work">کار</option>
+                                <option value="personal">شخصی</option>
+                                <option value="study">مطالعه</option>
+                            </select>
+                            <select id="priorityFilter" class="select-input" aria-label="فیلتر اولویت">
+                                <option value="all">همه اولویت‌ها</option>
+                                <option value="high">بالا</option>
+                                <option value="med">متوسط</option>
+                                <option value="low">کم</option>
+                            </select>
+                            <select id="statusFilter" class="select-input" aria-label="فیلتر وضعیت">
+                                <option value="all">همه وضعیت‌ها</option>
+                                <option value="active">در حال انجام</option>
+                                <option value="done">انجام شده</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="filterSheetBackdrop" class="modal-overlay"></div>
+                    <div class="items-list" id="tasksList"></div>
+                </section>
+
+                <!-- سایدبار: اهداف، پروژه‌ها، عادت‌ها، روتین‌ها -->
+                <aside class="right-sidebar" data-tab-group="growth">
+                    <section class="card-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-bullseye"></i> اهداف</h2>
+                            <button class="btn btn-icon-only" id="addGoalBtn" aria-label="افزودن هدف"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="items-list" id="goalsList"></div>
+                    </section>
+                    <section class="card-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-project-diagram"></i> پروژه‌ها</h2>
+                            <button class="btn btn-icon-only" id="addProjectBtn" aria-label="افزودن پروژه"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="items-list" id="projectsList"></div>
+                    </section>
+                    <section class="card-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-fire"></i> عادت‌ها</h2>
+                            <button class="btn btn-icon-only" id="addHabitBtn" aria-label="افزودن عادت"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="items-list" id="habitsList"></div>
+                    </section>
+                    <section class="card-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-sync-alt"></i> روتین‌ها</h2>
+                            <button class="btn btn-icon-only" id="addRoutineBtn" aria-label="افزودن روتین"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="items-list" id="routinesList"></div>
+                    </section>
+                </aside>
+
+                <!-- ژورنال و یادداشت سریع -->
+                <div class="journal-brain" data-tab-group="mind">
+                    <section class="card-section">
+                        <h2 class="card-title"><i class="fas fa-book-open"></i> ژورنال</h2>
+                        <div style="display:grid; gap:var(--sp-2);">
+                            <input type="text" id="journalSuccess" class="journal-input" placeholder="بهترین دستاورد امروز...">
+                            <input type="text" id="journalChallenge" class="journal-input" placeholder="چالش امروز...">
+                            <input type="text" id="journalNext" class="journal-input" placeholder="مهم‌ترین کار فردا...">
+                        </div>
+                    </section>
+                    <section class="card-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-lightbulb"></i> یادداشت سریع</h2>
+                            <button class="btn btn-icon-only" id="addBrainDumpBtn" aria-label="افزودن یادداشت"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="items-list" id="brainDumpList"></div>
+                    </section>
+                </div>
+
+                <!-- تحلیل و تقویم -->
+                <div class="insights-section" data-tab-group="insights">
+                    <section class="card-section monthly-section">
+                        <div class="card-header month-header">
+                            <h2 class="card-title"><i class="fas fa-calendar-alt"></i> نمای ماهانه</h2>
+                            <div style="display:flex; gap:var(--sp-1);">
+                                <button class="btn btn-icon-only" id="prevMonthBtn" aria-label="ماه قبل"><i class="fas fa-chevron-right"></i></button>
+                                <button class="btn btn-icon-only" id="nextMonthBtn" aria-label="ماه بعد"><i class="fas fa-chevron-left"></i></button>
+                            </div>
+                        </div>
+                        <div id="monthLabel" class="text-center" style="font-weight:800;"></div>
+                        <div id="monthGrid" class="month-grid"></div>
+                    </section>
+                    <section class="card-section analytics-section">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-pie"></i> تحلیل عملکرد</h2>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="stat-val" id="statTaskProgress">0%</div><div class="stat-lbl">کارهای امروز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statHabitStreak">0</div><div class="stat-lbl">میانگین زنجیره</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statRoutineDone">0</div><div class="stat-lbl">روتین‌ها</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statPomodorosToday">0</div><div class="stat-lbl">پومودورو</div></div>
+                        </div>
+                        <div class="progress-bar-container mt-2"><div class="progress-bar-fill" id="overallProgressBar" style="width:0%;"></div></div>
+                        <div class="period-stats-grid mt-2">
+                            <div class="stat-card"><div class="stat-val" id="statWeekTasks">0</div><div class="stat-lbl">کار ۷ روز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statWeekHabits">0%</div><div class="stat-lbl">عادت ۷ روز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statWeekPomodoros">0</div><div class="stat-lbl">پومودورو ۷ روز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statMonthTasks">0</div><div class="stat-lbl">کار ۳۰ روز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statMonthHabits">0%</div><div class="stat-lbl">عادت ۳۰ روز</div></div>
+                            <div class="stat-card"><div class="stat-val" id="statMonthPomodoros">0</div><div class="stat-lbl">پومودورو ۳۰ روز</div></div>
+                        </div>
+                        <div class="chart-container mt-2">
+                            <div><div class="chart-title">کارهای تکمیل‌شده ۷ روز</div><div id="weekTasksChart" class="chart-bars"></div></div>
+                            <div><div class="chart-title">کارهای تکمیل‌شده ۳۰ روز</div><div id="monthTasksChart" class="chart-bars"></div></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ناوبری پایین موبایل -->
+            <nav class="mobile-tab-bar" id="mobileTabBar" aria-label="پیمایش اصلی" role="tablist">
+                <button class="mobile-tab-btn active" data-tab="today" role="tab" aria-selected="true" aria-current="true"><i class="fas fa-list-check"></i><span>امروز</span></button>
+                <button class="mobile-tab-btn" data-tab="growth" role="tab" aria-selected="false" aria-current="false"><i class="fas fa-seedling"></i><span>رشد</span></button>
+                <button class="mobile-tab-btn" data-tab="mind" role="tab" aria-selected="false" aria-current="false"><i class="fas fa-brain"></i><span>ذهن</span></button>
+                <button class="mobile-tab-btn" data-tab="insights" role="tab" aria-selected="false" aria-current="false"><i class="fas fa-chart-pie"></i><span>تحلیل</span></button>
+            </nav>
+
+            <!-- مودال یادداشت -->
+            <div class="modal-overlay" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
+                <div class="modal-body">
+                    <h3 class="card-title" id="noteModalTitle" style="margin-bottom:1rem;"><i class="fas fa-sticky-note"></i> یادداشت تکمیلی</h3>
+                    <label for="modalNoteTextarea" class="sr-only">متن یادداشت</label>
+                    <textarea id="modalNoteTextarea" class="journal-box" rows="5" placeholder="جزئیات بیشتر..."></textarea>
+                    <div style="display:flex; justify-content:flex-end; gap:var(--sp-2); margin-top:1rem;">
+                        <button class="btn" id="closeModalBtn">انصراف</button>
+                        <button class="btn btn-primary" id="saveModalNoteBtn">ذخیره</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast -->
+            <div class="toast-notification" id="toastContainer" role="status" aria-live="polite">
+                <i class="fas fa-info-circle" id="toastIcon"></i>
+                <span id="toastMessage">پیام سیستم</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // دفترچه — کد ریفکتور شده (همه ویژگی‌ها حفظ شده، با بهبود خوانایی)
+        // ================================================================
+
+        (function() {
+            'use strict';
+
+            /* ---------- ابزارها ---------- */
+            const getLocalDateStr = (date = new Date()) => {
+                const d = date;
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            };
+
+            const isValidDateString = (dateStr) => {
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+                const [y, m, d] = dateStr.split('-').map(Number);
+                if (m < 1 || m > 12) return false;
+                const dateObj = new Date(y, m - 1, d);
+                return dateObj.getFullYear() === y && dateObj.getMonth() === m - 1 && dateObj.getDate() === d;
+            };
+
+            const deepMerge = (target, source) => {
+                if (!source || typeof source !== 'object') return target;
+                const result = { ...target };
+                for (const key in source) {
+                    if (source.hasOwnProperty(key)) {
+                        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                            result[key] = deepMerge(target[key] || {}, source[key]);
+                        } else {
+                            result[key] = source[key];
+                        }
+                    }
+                }
+                return result;
+            };
+
+            const sanitizeAttr = (str) => {
+                if (!str) return '';
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g,
+                    '&quot;').replace(/'/g, '&#039;');
+            };
+
+            const debounce = (fn, wait) => {
+                let t = null,
+                    lastArgs = null,
+                    lastThis = null;
+                const debounced = function(...args) {
+                    clearTimeout(t);
+                    lastArgs = args;
+                    lastThis = this;
+                    t = setTimeout(() => {
+                        t = null;
+                        fn.apply(lastThis, lastArgs || []);
+                        lastArgs = null;
+                        lastThis = null;
+                    }, wait);
+                };
+                debounced.cancel = () => { clearTimeout(t);
+                    t = null;
+                    lastArgs = null;
+                    lastThis = null; };
+                debounced.flush = () => {
+                    if (t === null) return;
+                    clearTimeout(t);
+                    t = null;
+                    fn.apply(lastThis, lastArgs || []);
+                    lastArgs = null;
+                    lastThis = null;
+                };
+                return debounced;
+            };
+
+            const makeId = () => {
+                if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+                return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+            };
+
+            const getInitialState = () => ({
+                selectedDate: getLocalDateStr(),
+                tasks: [],
+                goals: [],
+                projects: [],
+                habits: [],
+                routines: [],
+                brainDump: [],
+                journal: {},
+                pomodoroLog: {},
+                timerSessionsCompleted: 0,
+                timerMode: 'work',
+                timerSettings: { workDuration: 25, shortBreakDuration: 5, longBreakDuration: 15, longBreakInterval: 4 },
+                uiPrefs: { activeMobileTab: 'today' }
+            });
+
+            /* ---------- تقویم جلالی ---------- */
+            const JALALI_MONTHS = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن',
+                'اسفند'
+            ];
+            const FA_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            const toPersianDigits = (input) => String(input).replace(/[0-9]/g, d => FA_DIGITS[+d]);
+
+            let _jalaliSupportCache = null;
+
+            function isJalaliSupported() {
+                if (_jalaliSupportCache !== null) return _jalaliSupportCache;
+                try {
+                    const parts = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric',
+                            day: 'numeric' }).formatToParts(new Date());
+                    _jalaliSupportCache = parts.some(p => p.type === 'year') && parts.some(p => p.type === 'month');
+                } catch (e) { _jalaliSupportCache = false; }
+                return _jalaliSupportCache;
+            }
+
+            function gregorianToJalali(date) {
+                if (!isJalaliSupported()) return null;
+                try {
+                    const parts = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric',
+                        day: 'numeric' }).formatToParts(date);
+                    const get = (t) => parseInt(parts.find(p => p.type === t).value, 10);
+                    return { jy: get('year'), jm: get('month'), jd: get('day') };
+                } catch (e) { return null; }
+            }
+
+            function jalaliSortKey(date) {
+                const j = gregorianToJalali(date);
+                return j ? (j.jy * 10000 + j.jm * 100 + j.jd) : null;
+            }
+
+            function jalaliToGregorian(jy, jm, jd) {
+                if (!isJalaliSupported()) return null;
+                const targetKey = jy * 10000 + jm * 100 + jd;
+                let lo = -400000,
+                    hi = 400000;
+                const ref = new Date(2000, 0, 1, 12, 0, 0, 0);
+                while (lo < hi) {
+                    const mid = Math.floor((lo + hi) / 2);
+                    const candidate = new Date(ref.getTime() + mid * 86400000);
+                    const key = jalaliSortKey(candidate);
+                    if (key === null) return null;
+                    if (key < targetKey) lo = mid + 1;
+                    else hi = mid;
+                }
+                const result = new Date(ref.getTime() + lo * 86400000);
+                result.setHours(0, 0, 0, 0);
+                return result;
+            }
+
+            function jalaliMonthLength(jy, jm) {
+                if (jm <= 6) return 31;
+                if (jm <= 11) return 30;
+                const d = jalaliToGregorian(jy, 12, 30);
+                if (!d) return 29;
+                const check = gregorianToJalali(d);
+                return (check && check.jy === jy && check.jm === 12 && check.jd === 30) ? 30 : 29;
+            }
+
+            function formatJalaliDate(date, withWeekday) {
+                const j = gregorianToJalali(date);
+                if (!j) {
+                    const fallback = date.toLocaleDateString('fa-IR');
+                    return withWeekday ? `${DAYS_FA[date.getDay()]}، ${fallback}` : fallback;
+                }
+                const base = `${toPersianDigits(j.jd)} ${JALALI_MONTHS[j.jm - 1] || ''} ${toPersianDigits(j.jy)}`;
+                return withWeekday ? `${DAYS_FA[date.getDay()]}، ${base}` : base;
+            }
+
+            const DAYS_FA = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+            const CATEGORIES = { uni: { label: 'دانشگاه', class: 'badge-cat' }, work: { label: 'کار', class: 'badge-cat' },
+                personal: { label: 'شخصی', class: 'badge-cat' }, study: { label: 'مطالعه', class: 'badge-cat' } };
+            const PRIORITIES = { high: { label: 'بالا', class: 'badge-prio-high', border: 'priority-high' },
+                med: { label: 'متوسط', class: 'badge-prio-med', border: 'priority-med' },
+                low: { label: 'کم', class: 'badge-prio-low', border: 'priority-low' } };
+            const RECURRENCE = { none: { label: 'بدون تکرار', class: '' }, daily: { label: 'روزانه', class: 'badge-recur' },
+                weekly: { label: 'هفتگی', class: 'badge-recur' }, monthly: { label: 'ماهانه', class: 'badge-recur' } };
+
+            const DB_NAME = 'plannerDB';
+            const DB_VERSION = 2;
+            const LEGACY_STATE_KEY = 'planner_state_v7';
+            const LEGACY_THEME_KEY = 'planner_theme_v7';
+
+            /* ---------- مدیریت ذخیره‌سازی ---------- */
+            class StorageManager {
+                constructor() { this._dbPromise = null; }
+
+                openDB() {
+                    if (this._dbPromise) return this._dbPromise;
+                    this._dbPromise = new Promise((resolve, reject) => {
+                        if (!('indexedDB' in window)) { reject(new Error('IndexedDB در دسترس نیست'));
+                            return; }
+                        let req;
+                        try { req = indexedDB.open(DB_NAME, DB_VERSION); } catch (e) { reject(e);
+                            return; }
+                        req.onupgradeneeded = (e) => {
+                            const db = e.target.result;
+                            if (!db.objectStoreNames.contains('state')) db.createObjectStore('state');
+                            if (!db.objectStoreNames.contains('theme')) db.createObjectStore('theme');
+                            if (!db.objectStoreNames.contains('backups')) db.createObjectStore('backups', { keyPath: 'id',
+                                    autoIncrement: true });
+                        };
+                        req.onsuccess = (e) => resolve(e.target.result);
+                        req.onerror = () => reject(req.error || new Error('باز کردن IndexedDB ناموفق بود'));
+                    });
+                    return this._dbPromise;
+                }
+
+                idbGet(storeName, key) {
+                    return this.openDB().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(storeName, 'readonly');
+                        const req = tx.objectStore(storeName).get(key);
+                        req.onsuccess = () => resolve(req.result === undefined ? null : req.result);
+                        req.onerror = () => reject(req.error);
+                    }));
+                }
+
+                idbSet(storeName, key, value) {
+                    return this.openDB().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(storeName, 'readwrite');
+                        tx.objectStore(storeName).put(value, key);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => reject(tx.error);
+                    }));
+                }
+
+                idbAdd(storeName, value) {
+                    return this.openDB().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(storeName, 'readwrite');
+                        const req = tx.objectStore(storeName).add(value);
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    }));
+                }
+
+                idbDelete(storeName, key) {
+                    return this.openDB().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(storeName, 'readwrite');
+                        tx.objectStore(storeName).delete(key);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => reject(tx.error);
+                    }));
+                }
+
+                idbGetAll(storeName) {
+                    return this.openDB().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(storeName, 'readonly');
+                        const req = tx.objectStore(storeName).getAll();
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    }));
+                }
+
+                _lsKey(storeName, key) { return `planner_${storeName}_${key}`; }
+
+                async get(storeName, key) {
+                    try { const val = await this.idbGet(storeName, key); if (val !== null && val !== undefined) return val; }
+                    catch (e) {}
+                    try { const raw = window.localStorage.getItem(this._lsKey(storeName, key)); return raw !== null ?
+                            JSON.parse(raw) : null; } catch (e) {}
+                    return null;
+                }
+
+                async set(storeName, key, value) {
+                    try { await this.idbSet(storeName, key, value); return true; } catch (e) {}
+                    try { window.localStorage.setItem(this._lsKey(storeName, key), JSON.stringify(value)); return true; }
+                    catch (e) {}
+                    return false;
+                }
+
+                syncSet(storeName, key, value) {
+                    try { window.localStorage.setItem(this._lsKey(storeName, key), JSON.stringify(value)); return true; }
+                    catch (e) { return false; }
+                }
+
+                async migrateLegacyData() {
+                    let existingState = null;
+                    try { existingState = await this.get('state', 'main'); } catch (e) {}
+                    if (existingState === null || existingState === undefined) {
+                        let legacyState = null;
+                        try { const raw = window.localStorage.getItem(LEGACY_STATE_KEY); if (raw) legacyState = JSON.parse(
+                            raw); } catch (e) {}
+                        if (legacyState) { try { await this.set('state', 'main', legacyState); } catch (e) {} }
+                    }
+                }
+
+                async addBackup(data) {
+                    const backup = { timestamp: Date.now(), data: data };
+                    const id = await this.idbAdd('backups', backup);
+                    const allBackups = await this.idbGetAll('backups');
+                    if (allBackups.length > 5) {
+                        allBackups.sort((a, b) => a.timestamp - b.timestamp);
+                        for (let i = 0; i < allBackups.length - 5; i++) await this.idbDelete('backups', allBackups[i].id);
+                    }
+                    return id;
+                }
+
+                async getLatestBackup() {
+                    const all = await this.idbGetAll('backups');
+                    if (!all.length) return null;
+                    all.sort((a, b) => b.timestamp - a.timestamp);
+                    return all[0];
+                }
+            }
+
+            /* ---------- برنامه اصلی ---------- */
+            class PlannerApp {
+                constructor() {
+                    this.storage = new StorageManager();
+                    this.state = getInitialState();
+                    this.history = [];
+                    this.historyIndex = -1;
+                    this.activeModalTaskId = null;
+                    this.searchQuery = '';
+                    this.filterTag = 'all';
+                    this.filterPriority = 'all';
+                    this.filterStatus = 'all';
+                    this.expandedTasks = new Set();
+                    this.jalaliUIEnabled = false;
+                    this.timer = {
+                        mode: 'work',
+                        isRunning: false,
+                        timeLeft: 25 * 60,
+                        totalTime: 25 * 60,
+                        sessionsCompleted: 0,
+                        workDuration: 25,
+                        shortBreakDuration: 5,
+                        longBreakDuration: 15,
+                        longBreakInterval: 4,
+                        intervalId: null,
+                        startTimestamp: null,
+                        initialTimeLeft: null
+                    };
+                    this.debouncedPersist = debounce(() => this.persistState(), 500);
+                    this.debouncedHistorySnapshot = debounce(() => this.recordHistoryState(), 700);
+                    this.init();
+                }
+
+                async init() {
+                    try { await this.storage.migrateLegacyData(); } catch (e) {}
+                    await this.setupTheme();
+                    await this.loadState();
+                    this.normalizeState();
+                    this.applyStateToTimer();
+                    this.setupJalaliPicker();
+                    this.bindEvents();
+                    this.recordHistoryState();
+                    this.renderAll();
+                    this.activeMobileTab = (this.state.uiPrefs && this.state.uiPrefs.activeMobileTab) || 'today';
+                    this.syncMobileTabVisibility();
+                    this.updateBackupStatus();
+                    this.startAutoBackup();
+                    document.getElementById('appLoading').classList.add('hidden');
+                    document.getElementById('appContainer').style.visibility = 'visible';
+                }
+
+                async loadState() {
+                    try {
+                        const stored = await this.storage.get('state', 'main');
+                        if (stored) {
+                            this.state = deepMerge(getInitialState(), stored);
+                            if (!isValidDateString(this.state.selectedDate)) this.state.selectedDate = getLocalDateStr();
+                            return;
+                        }
+                    } catch (e) { this.showToast('بارگذاری داده‌های قبلی ناموفق بود', 'danger'); }
+                    this.state = getInitialState();
+                }
+
+                normalizeState() {
+                    const initial = getInitialState();
+                    if (!this.state || typeof this.state !== 'object' || Array.isArray(this.state)) this.state = initial;
+                    if (!isValidDateString(this.state.selectedDate)) this.state.selectedDate = getLocalDateStr();
+                    for (const key of ['tasks', 'goals', 'projects', 'habits', 'routines', 'brainDump']) {
+                        if (!Array.isArray(this.state[key])) this.state[key] = [];
+                    }
+                    if (!this.state.pomodoroLog || typeof this.state.pomodoroLog !== 'object' || Array.isArray(this.state
+                            .pomodoroLog)) this.state.pomodoroLog = {};
+                    if (!this.state.journal || typeof this.state.journal !== 'object' || Array.isArray(this.state
+                            .journal)) this.state.journal = {};
+                    if (!this.state.uiPrefs || typeof this.state.uiPrefs !== 'object') this.state.uiPrefs = {
+                        activeMobileTab: 'today'
+                    };
+
+                    this.state.tasks = this.state.tasks.filter(t => t && typeof t === 'object').map(t => ({
+                        ...t,
+                        id: typeof t.id === 'string' && t.id ? t.id : makeId(),
+                        text: typeof t.text === 'string' ? t.text : '',
+                        done: !!t.done,
+                        date: isValidDateString(t.date) ? t.date : this.state.selectedDate,
+                        tag: CATEGORIES[t.tag] ? t.tag : 'personal',
+                        priority: PRIORITIES[t.priority] ? t.priority : 'med',
+                        recurrence: RECURRENCE[t.recurrence] ? t.recurrence : 'none',
+                        goalId: typeof t.goalId === 'string' ? t.goalId : '',
+                        projectId: typeof t.projectId === 'string' ? t.projectId : '',
+                        note: typeof t.note === 'string' ? t.note : ''
+                    }));
+
+                    this.state.goals = this.state.goals.filter(x => x && typeof x === 'object').map(x => ({ ...x,
+                        id: typeof x.id === 'string' && x.id ? x.id : makeId(),
+                        title: typeof x.title === 'string' ? x.title : '' }));
+                    this.state.projects = this.state.projects.filter(x => x && typeof x === 'object').map(x => ({ ...x,
+                        id: typeof x.id === 'string' && x.id ? x.id : makeId(),
+                        title: typeof x.title === 'string' ? x.title : '' }));
+                    this.state.habits = this.state.habits.filter(x => x && typeof x === 'object').map(x => ({ ...x,
+                        id: typeof x.id === 'string' && x.id ? x.id : makeId(),
+                        title: typeof x.title === 'string' ? x.title : '',
+                        dates: x.dates && typeof x.dates === 'object' && !Array.isArray(x.dates) ? x.dates : {},
+                        goalId: typeof x.goalId === 'string' ? x.goalId : '' }));
+                    this.state.routines = this.state.routines.filter(x => x && typeof x === 'object').map(x => ({ ...x,
+                        id: typeof x.id === 'string' && x.id ? x.id : makeId(),
+                        title: typeof x.title === 'string' ? x.title : '',
+                        dates: x.dates && typeof x.dates === 'object' && !Array.isArray(x.dates) ? x.dates : {} }));
+                    this.state.brainDump = this.state.brainDump.filter(x => x && typeof x === 'object').map(x => ({ ...x,
+                        id: typeof x.id === 'string' && x.id ? x.id : makeId(),
+                        text: typeof x.text === 'string' ? x.text : '' }));
+
+                    for (const [date, value] of Object.entries(this.state.pomodoroLog)) {
+                        if (!isValidDateString(date)) { delete this.state.pomodoroLog[date]; continue; }
+                        const n = Number.parseInt(value, 10);
+                        if (!Number.isFinite(n) || n <= 0) delete this.state.pomodoroLog[date];
+                        else this.state.pomodoroLog[date] = n;
+                    }
+
+                    const clamp = (value, min, max, fallback) => {
+                        const n = Number.parseInt(value, 10);
+                        return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+                    };
+                    const settings = this.state.timerSettings && typeof this.state.timerSettings === 'object' ? this.state
+                        .timerSettings : {};
+                    this.state.timerSettings = {
+                        workDuration: clamp(settings.workDuration, 1, 120, 25),
+                        shortBreakDuration: clamp(settings.shortBreakDuration, 1, 60, 5),
+                        longBreakDuration: clamp(settings.longBreakDuration, 1, 60, 15),
+                        longBreakInterval: clamp(settings.longBreakInterval, 1, 12, 4)
+                    };
+                    this.state.timerSessionsCompleted = Math.max(0, Number.parseInt(this.state.timerSessionsCompleted,
+                        10) || 0);
+                    if (!['work', 'shortBreak', 'longBreak'].includes(this.state.timerMode)) this.state.timerMode =
+                    'work';
+
+                    const journal = this.state.journal;
+                    for (const key of Object.keys(journal)) {
+                        if (typeof journal[key] === 'string') journal[key] = { success: journal[key], challenge: '',
+                            next: '' };
+                        else if (journal[key] && typeof journal[key] === 'object') {
+                            journal[key].success = journal[key].success || '';
+                            journal[key].challenge = journal[key].challenge || '';
+                            journal[key].next = journal[key].next || '';
+                        } else { journal[key] = { success: '', challenge: '', next: '' }; }
+                    }
+                }
+
+                applyStateToTimer() {
+                    if (!this.state.timerSettings) this.state.timerSettings = {};
+                    const ts = this.state.timerSettings;
+                    this.timer.workDuration = ts.workDuration || 25;
+                    this.timer.shortBreakDuration = ts.shortBreakDuration || 5;
+                    this.timer.longBreakDuration = ts.longBreakDuration || 15;
+                    this.timer.longBreakInterval = ts.longBreakInterval || 4;
+                    this.timer.sessionsCompleted = this.state.timerSessionsCompleted || 0;
+                    if (this.state.timerMode) this.timer.mode = this.state.timerMode;
+
+                    document.getElementById('workDuration').value = this.timer.workDuration;
+                    document.getElementById('shortBreakDuration').value = this.timer.shortBreakDuration;
+                    document.getElementById('longBreakDuration').value = this.timer.longBreakDuration;
+                    document.getElementById('longBreakInterval').value = this.timer.longBreakInterval;
+
+                    if (!this.timer.isRunning) {
+                        if (this.timer.mode === 'work') this.timer.timeLeft = this.timer.workDuration * 60;
+                        else if (this.timer.mode === 'shortBreak') this.timer.timeLeft = this.timer.shortBreakDuration *
+                            60;
+                        else if (this.timer.mode === 'longBreak') this.timer.timeLeft = this.timer.longBreakDuration *
+                        60;
+                        this.timer.totalTime = this.timer.timeLeft;
+                    }
+                    this.renderTimer();
+                }
+
+                resetTimerFull() {
+                    this.stopTimer();
+                    this.timer = {
+                        mode: 'work',
+                        isRunning: false,
+                        timeLeft: 25 * 60,
+                        totalTime: 25 * 60,
+                        sessionsCompleted: 0,
+                        workDuration: 25,
+                        shortBreakDuration: 5,
+                        longBreakDuration: 15,
+                        longBreakInterval: 4,
+                        intervalId: null,
+                        startTimestamp: null,
+                        initialTimeLeft: null
+                    };
+                    this.state.timerMode = 'work';
+                    this.state.timerSessionsCompleted = 0;
+                    this.applyStateToTimer();
+                }
+
+                async persistState() {
+                    this.setSyncStatus('saving');
+                    try {
+                        const ok = await this.storage.set('state', 'main', { ...this.state });
+                        this.setSyncStatus(ok ? 'saved' : 'error');
+                        if (!ok) this.showToast('ذخیره‌سازی با مشکل مواجه شد', 'danger');
+                    } catch (e) { this.setSyncStatus('error');
+                        this.showToast('ذخیره‌سازی ناموفق بود', 'danger'); }
+                }
+
+                setSyncStatus(status) {
+                    const el = document.getElementById('syncStatus');
+                    const text = document.getElementById('syncStatusText');
+                    if (!el || !text) return;
+                    el.className = 'sync-status ' + status;
+                    text.textContent = status === 'saving' ? 'در حال ذخیره...' : status === 'error' ? 'خطا در ذخیره' :
+                        'ذخیره شده';
+                }
+
+                recordHistoryState() {
+                    if (this.debouncedHistorySnapshot && this.debouncedHistorySnapshot.cancel) this.debouncedHistorySnapshot
+                        .cancel();
+                    const snapshot = JSON.parse(JSON.stringify(this.state));
+                    this.history = this.history.slice(0, this.historyIndex + 1);
+                    this.history.push(snapshot);
+                    if (this.history.length > 30) this.history.shift();
+                    this.historyIndex = this.history.length - 1;
+                    this.debouncedPersist();
+                }
+
+                undo() {
+                    if (this.debouncedHistorySnapshot && this.debouncedHistorySnapshot.cancel) this.debouncedHistorySnapshot
+                        .cancel();
+                    if (this.historyIndex > 0) {
+                        this.historyIndex--;
+                        this.state = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+                        this.applyStateToTimer();
+                        this.renderAll();
+                        this.debouncedPersist();
+                    }
+                }
+
+                redo() {
+                    if (this.debouncedHistorySnapshot && this.debouncedHistorySnapshot.cancel) this.debouncedHistorySnapshot
+                        .cancel();
+                    if (this.historyIndex < this.history.length - 1) {
+                        this.historyIndex++;
+                        this.state = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+                        this.applyStateToTimer();
+                        this.renderAll();
+                        this.debouncedPersist();
+                    }
+                }
+
+                async setupTheme() {
+                    let theme = 'light';
+                    try { const stored = await this.storage.get('theme', 'theme'); if (stored) theme = stored; } catch (
+                    e) {}
+                    document.documentElement.setAttribute('data-theme', theme);
+                    this.updateThemeIcon(theme);
+                }
+
+                async toggleTheme() {
+                    const curr = document.documentElement.getAttribute('data-theme');
+                    const next = curr === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', next);
+                    this.updateThemeIcon(next);
+                    try { await this.storage.set('theme', 'theme', next); } catch (e) {}
+                }
+
+                updateThemeIcon(theme) {
+                    const icon = document.querySelector('#themeToggle i');
+                    if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                }
+
+                showToast(msg, type = 'info') {
+                    const container = document.getElementById('toastContainer');
+                    const msgEl = document.getElementById('toastMessage');
+                    const iconEl = document.getElementById('toastIcon');
+                    msgEl.textContent = msg;
+                    iconEl.className = type === 'danger' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+                    container.classList.add('active');
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => container.classList.remove('active'), 3000);
+                }
+
+                async autoBackup() {
+                    try { await this.storage.addBackup(JSON.parse(JSON.stringify(this.state)));
+                        this.updateBackupStatus(); } catch (e) { this.showToast('خطا در تهیه نسخه پشتیبان', 'danger'); }
+                }
+
+                startAutoBackup() { setInterval(() => { this.autoBackup(); }, 5 * 60 * 1000); }
+
+                async updateBackupStatus() {
+                    const statusEl = document.getElementById('backupStatusText');
+                    if (!statusEl) return;
+                    try {
+                        const latest = await this.storage.getLatestBackup();
+                        if (latest && Number.isFinite(latest.timestamp)) {
+                            const time = new Date(latest.timestamp).toLocaleTimeString('fa-IR');
+                            statusEl.textContent = `آخرین پشتیبان: ${time}`;
+                        } else { statusEl.textContent = 'بدون نسخه پشتیبان'; }
+                    } catch (e) { statusEl.textContent = 'خطا در خواندن پشتیبان'; }
+                }
+
+                setupJalaliPicker() {
+                    this.jalaliUIEnabled = isJalaliSupported();
+                    const wrap = document.getElementById('jalaliPickerWrap');
+                    const fallback = document.getElementById('datePickerFallback');
+                    if (!this.jalaliUIEnabled) {
+                        wrap.classList.add('hidden');
+                        fallback.classList.remove('hidden');
+                        fallback.addEventListener('change', (e) => { if (e.target.value) { this.state.selectedDate = e
+                                    .target.value;
+                                this.recordHistoryState();
+                                this.renderAll(); } });
+                        return;
+                    }
+                    document.getElementById('jalaliMonthSelect').innerHTML = JALALI_MONTHS.map((m, i) =>
+                        `<option value="${i+1}">${m}</option>`).join('');
+                    document.getElementById('jalaliDateBtn').addEventListener('click', () => this
+                    .toggleJalaliPopover());
+                    document.getElementById('jalaliCancelBtn').addEventListener('click', () => this
+                    .closeJalaliPopover());
+                    document.getElementById('jalaliGoBtn').addEventListener('click', () => this
+                        .applyJalaliPopoverSelection());
+                    document.getElementById('jalaliYearSelect').addEventListener('change', () => this
+                        .refreshJalaliDaySelect());
+                    document.getElementById('jalaliMonthSelect').addEventListener('change', () => this
+                        .refreshJalaliDaySelect());
+                    document.addEventListener('click', (e) => { if (!document.getElementById('jalaliPickerWrap')
+                            .contains(e.target)) this.closeJalaliPopover(); });
+                }
+
+                toggleJalaliPopover() { const pop = document.getElementById('jalaliPopover'); pop.classList.contains(
+                        'active') ? this.closeJalaliPopover() : this.openJalaliPopover(); }
+
+                openJalaliPopover() {
+                    const currDate = new Date(this.state.selectedDate + 'T00:00:00');
+                    const j = gregorianToJalali(currDate) || { jy: 1404, jm: 1, jd: 1 };
+                    const yearSelect = document.getElementById('jalaliYearSelect');
+                    let html = '';
+                    const startYear = j.jy - 50,
+                        endYear = j.jy + 20;
+                    for (let y = startYear; y <= endYear; y++) html +=
+                        `<option value="${y}" ${y===j.jy?'selected':''}>${toPersianDigits(y)}</option>`;
+                    yearSelect.innerHTML = html;
+                    document.getElementById('jalaliMonthSelect').value = String(j.jm);
+                    this.refreshJalaliDaySelect(j.jd);
+                    document.getElementById('jalaliPopover').classList.add('active');
+                    document.getElementById('jalaliDateBtn').setAttribute('aria-expanded', 'true');
+                }
+
+                closeJalaliPopover() { document.getElementById('jalaliPopover').classList.remove('active');
+                    document.getElementById('jalaliDateBtn').setAttribute('aria-expanded', 'false'); }
+
+                refreshJalaliDaySelect(preferredDay) {
+                    const jy = parseInt(document.getElementById('jalaliYearSelect').value, 10);
+                    const jm = parseInt(document.getElementById('jalaliMonthSelect').value, 10);
+                    const daySelect = document.getElementById('jalaliDaySelect');
+                    const dayCount = jalaliMonthLength(jy, jm);
+                    const currentVal = preferredDay || parseInt(daySelect.value, 10) || 1;
+                    const dayToSelect = Math.min(currentVal, dayCount);
+                    let html = '';
+                    for (let d = 1; d <= dayCount; d++) html +=
+                        `<option value="${d}" ${d===dayToSelect?'selected':''}>${toPersianDigits(d)}</option>`;
+                    daySelect.innerHTML = html;
+                }
+
+                applyJalaliPopoverSelection() {
+                    const jy = parseInt(document.getElementById('jalaliYearSelect').value, 10);
+                    const jm = parseInt(document.getElementById('jalaliMonthSelect').value, 10);
+                    const jd = parseInt(document.getElementById('jalaliDaySelect').value, 10);
+                    const gDate = jalaliToGregorian(jy, jm, jd);
+                    if (!gDate) { this.showToast('تبدیل تاریخ ناموفق بود', 'danger'); return; }
+                    this.state.selectedDate = getLocalDateStr(gDate);
+                    this.recordHistoryState();
+                    this.renderAll();
+                    this.closeJalaliPopover();
+                }
+
+                updateJalaliPickerButton(date) {
+                    const label = document.getElementById('jalaliDateBtnLabel');
+                    if (label) label.textContent = this.jalaliUIEnabled ? formatJalaliDate(date, false) :
+                        'انتخاب تاریخ';
+                    const fallback = document.getElementById('datePickerFallback');
+                    if (fallback) fallback.value = getLocalDateStr(date);
+                }
+
+                renderMonthlyView() {
+                    const selectedDate = new Date(this.state.selectedDate + 'T00:00:00');
+                    const todayStr = getLocalDateStr();
+                    const jalali = gregorianToJalali(selectedDate);
+                    let year, month, firstDay, daysInMonth, isJalali = false;
+                    if (jalali) {
+                        isJalali = true;
+                        year = jalali.jy;
+                        month = jalali.jm;
+                        firstDay = new Date(jalaliToGregorian(year, month, 1)).getDay();
+                        daysInMonth = jalaliMonthLength(year, month);
+                    } else {
+                        year = selectedDate.getFullYear();
+                        month = selectedDate.getMonth();
+                        firstDay = new Date(year, month, 1).getDay();
+                        daysInMonth = new Date(year, month + 1, 0).getDate();
+                    }
+                    const monthLabel = isJalali ?
+                        `${JALALI_MONTHS[month - 1]} ${toPersianDigits(year)}` :
+                        `${selectedDate.toLocaleDateString('fa-IR', { month: 'long', year: 'numeric' })}`;
+                    document.getElementById('monthLabel').textContent = monthLabel;
+                    const grid = document.getElementById('monthGrid');
+                    let html = '';
+                    const calendarDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+                    for (const dayName of calendarDays) html +=
+                        `<div class="month-cell" style="font-weight:700; color:var(--ink-soft); cursor:default; border-style:solid;">${dayName}</div>`;
+                    const firstDayOffset = (firstDay + 1) % 7;
+                    for (let i = 0; i < firstDayOffset; i++) html +=
+                        `<div class="month-cell" style="cursor:default; background:transparent; border:none;"></div>`;
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const dateObj = isJalali ? jalaliToGregorian(year, month, day) : new Date(year, month, day);
+                        const dateStr = getLocalDateStr(dateObj);
+                        const isToday = dateStr === todayStr;
+                        const isSelected = dateStr === this.state.selectedDate;
+                        const tasksCount = this.state.tasks.filter(t => t.date === dateStr).length;
+                        const habitsDone = this.state.habits.filter(h => h.dates && h.dates[dateStr]).length;
+                        const pomodoros = (this.state.pomodoroLog && this.state.pomodoroLog[dateStr]) || 0;
+                        const indicatorHtml =
+                            `<div class="mini-indicators">${tasksCount > 0 ? `<span style="background:var(--saffron);"></span>` : ''}${habitsDone > 0 ? `<span style="background:var(--pistachio);"></span>` : ''}${pomodoros > 0 ? `<span style="background:var(--ochre);"></span>` : ''}</div>`;
+                        html +=
+                            `<div class="month-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" data-date="${dateStr}"><div class="day-number">${toPersianDigits(day)}</div>${indicatorHtml}</div>`;
+                    }
+                    grid.innerHTML = html;
+                    grid.querySelectorAll('.month-cell[data-date]').forEach(cell => {
+                        cell.addEventListener('click', () => { this.state.selectedDate = cell.dataset.date;
+                            this.recordHistoryState();
+                            this.renderAll(); });
+                    });
+                }
+
+                renderTimer() {
+                    const display = document.getElementById('timerDisplay');
+                    const minutes = Math.floor(this.timer.timeLeft / 60);
+                    const seconds = this.timer.timeLeft % 60;
+                    display.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+                    document.getElementById('sessionCounter').textContent = this.timer.sessionsCompleted
+                        .toLocaleString('fa-IR');
+                    document.querySelectorAll('.timer-mode-tab').forEach(tab => tab.classList.toggle('active', tab
+                        .dataset.mode === this.timer.mode));
+                    document.getElementById('startPauseIcon').className = this.timer.isRunning ? 'fas fa-pause' :
+                        'fas fa-play';
+                    const pomodoros = (this.state.pomodoroLog && this.state.pomodoroLog[this.state.selectedDate]) || 0;
+                    const statEl = document.getElementById('statPomodorosToday');
+                    if (statEl) statEl.textContent = pomodoros;
+                    const dial = document.getElementById('timerDial');
+                    if (dial) {
+                        const total = this.timer.totalTime || 1;
+                        const elapsedPct = Math.min(100, Math.max(0, Math.round(((total - this.timer.timeLeft) /
+                            total) * 100)));
+                        dial.style.setProperty('--progress', elapsedPct);
+                    }
+                }
+
+                setTimerMode(mode) {
+                    this.stopTimer();
+                    this.timer.mode = mode;
+                    this.state.timerMode = mode;
+                    if (mode === 'work') this.timer.timeLeft = this.timer.workDuration * 60;
+                    else if (mode === 'shortBreak') this.timer.timeLeft = this.timer.shortBreakDuration * 60;
+                    else if (mode === 'longBreak') this.timer.timeLeft = this.timer.longBreakDuration * 60;
+                    this.timer.totalTime = this.timer.timeLeft;
+                    this.recordHistoryState();
+                    this.renderTimer();
+                }
+
+                startTimer() {
+                    if (this.timer.isRunning) return;
+                    if (this.timer.timeLeft <= 0) this.setTimerMode(this.timer.mode);
+                    this.timer.isRunning = true;
+                    this.timer.startTimestamp = Date.now();
+                    this.timer.initialTimeLeft = this.timer.timeLeft;
+                    this.timer.intervalId = setInterval(() => {
+                        const elapsed = Math.floor((Date.now() - this.timer.startTimestamp) / 1000);
+                        this.timer.timeLeft = Math.max(0, this.timer.initialTimeLeft - elapsed);
+                        if (this.timer.timeLeft <= 0) { this.timer.timeLeft = 0;
+                            this.handleTimerComplete(); }
+                        this.renderTimer();
+                    }, 250);
+                    this.renderTimer();
+                }
+
+                pauseTimer() {
+                    if (!this.timer.isRunning) return;
+                    const elapsed = Math.floor((Date.now() - this.timer.startTimestamp) / 1000);
+                    this.timer.timeLeft = Math.max(0, this.timer.initialTimeLeft - elapsed);
+                    this.timer.isRunning = false;
+                    clearInterval(this.timer.intervalId);
+                    this.renderTimer();
+                }
+
+                stopTimer() { this.timer.isRunning = false;
+                    clearInterval(this.timer.intervalId); }
+
+                resetTimer() { this.stopTimer();
+                    this.setTimerMode(this.timer.mode); }
+
+                skipTimer() {
+                    this.stopTimer();
+                    if (this.timer.mode === 'work') this.setTimerMode('shortBreak');
+                    else this.setTimerMode('work');
+                    this.showToast('مرحله فعلی رد شد');
+                }
+
+                handleTimerComplete(skip = false) {
+                    if (this.timer.mode === 'work') {
+                        this.timer.sessionsCompleted++;
+                        this.state.timerSessionsCompleted = this.timer.sessionsCompleted;
+                        const dateKey = this.state.selectedDate;
+                        if (!this.state.pomodoroLog) this.state.pomodoroLog = {};
+                        this.state.pomodoroLog[dateKey] = (this.state.pomodoroLog[dateKey] || 0) + 1;
+                        this.recordHistoryState();
+                        this.updateAnalytics();
+                        if (this.timer.sessionsCompleted % this.timer.longBreakInterval === 0) this.setTimerMode(
+                            'longBreak');
+                        else this.setTimerMode('shortBreak');
+                        if (!skip) { this.showToast('یک دور کار عمیق کامل شد!', 'success');
+                            this.notifyUser('پومودورو کامل شد', 'زمان استراحت!'); }
+                    } else {
+                        this.setTimerMode('work');
+                        if (!skip) { this.showToast('استراحت تمام شد، برگرد به کار!', 'info');
+                            this.notifyUser('استراحت تمام شد', 'شروع دور جدید کار'); }
+                    }
+                    this.renderTimer();
+                }
+
+                handleVisibilityChange() {
+                    if (!document.hidden && this.timer.isRunning) {
+                        const elapsed = Math.floor((Date.now() - this.timer.startTimestamp) / 1000);
+                        this.timer.timeLeft = Math.max(0, this.timer.initialTimeLeft - elapsed);
+                        if (this.timer.timeLeft <= 0) { this.timer.timeLeft = 0;
+                            this.handleTimerComplete(); }
+                        this.renderTimer();
+                    }
+                }
+
+                requestNotificationPermission() {
+                    if (!("Notification" in window)) { this.showToast('مرورگر شما از اعلان پشتیبانی نمی‌کند',
+                        'danger'); return; }
+                    if (Notification.permission === 'granted') { this.showToast('اعلان‌ها از قبل فعال هستند'); return; }
+                    Notification.requestPermission().then(permission => this.showToast(permission === 'granted' ?
+                        'اعلان‌ها فعال شدند' : 'اجازه اعلان داده نشد'));
+                }
+
+                notifyUser(title, body) {
+                    if (!("Notification" in window)) return;
+                    if (Notification.permission === "granted") { try { new Notification(title, { body }); } catch (
+                        e) {} }
+                }
+
+                renderAll() {
+                    this.renderDayTabs();
+                    this.renderMonthlyView();
+                    this.renderTasks();
+                    this.renderGoals();
+                    this.renderProjects();
+                    this.renderHabits();
+                    this.renderRoutines();
+                    this.renderBrainDump();
+                    this.renderJournal();
+                    this.updateAnalytics();
+                    this.renderTimer();
+                }
+
+                renderDayTabs() {
+                    const container = document.getElementById('dayTabsContainer');
+                    const currDate = new Date(this.state.selectedDate + 'T00:00:00');
+                    const todayStr = getLocalDateStr();
+                    let html = '';
+                    for (let i = -3; i <= 3; i++) {
+                        const d = new Date(currDate);
+                        d.setDate(currDate.getDate() + i);
+                        const dateStr = getLocalDateStr(d);
+                        const isActive = dateStr === this.state.selectedDate;
+                        const isToday = dateStr === todayStr;
+                        const jalali = gregorianToJalali(d);
+                        const dayNum = jalali ? toPersianDigits(jalali.jd) : toPersianDigits(d.getDate());
+                        html +=
+                            `<button type="button" class="day-tab ${isActive?'active':''} ${isToday?'is-today':''}" data-date="${dateStr}" role="tab" aria-selected="${isActive}">
+                                <span>${DAYS_FA[d.getDay()]}</span><small>${dayNum}</small>${isToday?'<span class="today-dot" aria-hidden="true"></span>':''}
+                            </button>`;
+                    }
+                    container.innerHTML = html;
+                    document.getElementById('currentDayLabel').textContent = formatJalaliDate(currDate, true);
+                    this.updateJalaliPickerButton(currDate);
+                }
+
+                renderTasks() {
+                    const container = document.getElementById('tasksList');
+                    const tasks = this.state.tasks.filter(t => t.date === this.state.selectedDate);
+                    if (!tasks.length) {
+                        container.innerHTML =
+                            `<div class="empty-state" id="tasksEmptyState"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i> کاری برای نمایش یافت نشد.</div>`;
+                        if (this._taskSortable) this._taskSortable.option('disabled', true);
+                        return;
+                    }
+                    container.innerHTML = tasks.map(task => {
+                        const prio = PRIORITIES[task.priority] || PRIORITIES.med;
+                        const recur = RECURRENCE[task.recurrence] || RECURRENCE.none;
+                        const project = task.projectId ? this.state.projects.find(p => p.id === task
+                            .projectId) : null;
+                        const isOpen = this.expandedTasks.has(task.id);
+                        return `<div class="task-item ${task.done?'done':''} ${prio.border}" draggable="true" data-task-id="${task.id}" data-tag="${task.tag}" data-priority="${task.priority}" data-done="${!!task.done}">
+                                <div class="task-row-main">
+                                    <span class="drag-handle" aria-hidden="true"><i class="fas fa-grip-vertical"></i></span>
+                                    <span class="checkbox-hit-area"><input type="checkbox" class="checkbox-custom" ${task.done?'checked':''} data-action="toggle-task" data-id="${task.id}" aria-label="علامت‌گذاری به عنوان انجام‌شده"></span>
+                                    <input type="text" class="task-title" value="${sanitizeAttr(task.text)}" data-action="edit-task" data-id="${task.id}" placeholder="عنوان کار..." aria-label="عنوان کار">
+                                    <span class="badge ${prio.class}">${prio.label}</span>
+                                    ${task.recurrence !== 'none' ? `<span class="badge ${recur.class}"><i class="fas fa-redo"></i> ${recur.label}</span>` : ''}
+                                    ${project ? `<span class="badge badge-project"><i class="fas fa-project-diagram"></i> ${sanitizeAttr(project.title)}</span>` : ''}
+                                    <div class="task-row-actions">
+                                        <button class="btn btn-icon-only" data-action="toggle-advanced" data-id="${task.id}" title="گزینه‌های بیشتر" aria-expanded="${isOpen}" aria-label="نمایش گزینه‌های بیشتر"><i class="fas fa-sliders-h"></i></button>
+                                        <button class="btn btn-icon-only" data-action="note-task" data-id="${task.id}" title="یادداشت" aria-label="افزودن یادداشت"><i class="far fa-sticky-note"></i></button>
+                                        <button class="btn btn-icon-only btn-danger" data-action="delete-task" data-id="${task.id}" title="حذف" aria-label="حذف کار"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <div class="task-advanced ${isOpen?'open':''}">
+                                    <div class="task-advanced-field"><label for="tag-${task.id}">دسته</label><select id="tag-${task.id}" class="select-input" data-action="change-tag" data-id="${task.id}">${Object.keys(CATEGORIES).map(k=>`<option value="${k}" ${task.tag===k?'selected':''}>${CATEGORIES[k].label}</option>`).join('')}</select></div>
+                                    <div class="task-advanced-field"><label for="prio-${task.id}">اولویت</label><select id="prio-${task.id}" class="select-input" data-action="change-priority" data-id="${task.id}">${Object.keys(PRIORITIES).map(k=>`<option value="${k}" ${task.priority===k?'selected':''}>${PRIORITIES[k].label}</option>`).join('')}</select></div>
+                                    <div class="task-advanced-field"><label for="recur-${task.id}">تکرار</label><select id="recur-${task.id}" class="select-input" data-action="change-recurrence" data-id="${task.id}">${Object.keys(RECURRENCE).map(k=>`<option value="${k}" ${task.recurrence===k?'selected':''}>${RECURRENCE[k].label}</option>`).join('')}</select></div>
+                                    <div class="task-advanced-field"><label for="proj-${task.id}">پروژه</label><select id="proj-${task.id}" class="select-input" data-action="change-project" data-id="${task.id}"><option value="">بدون پروژه</option>${this.state.projects.map(p=>`<option value="${p.id}" ${task.projectId===p.id?'selected':''}>${sanitizeAttr(p.title)}</option>`).join('')}</select></div>
+                                </div>
+                            </div>`;
+                    }).join('') +
+                        `<div class="empty-state hidden" id="tasksEmptyState"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i> کاری برای نمایش یافت نشد.</div>`;
+                    this.applyTaskFilters();
+                }
+
+                applyTaskFilters() {
+                    const container = document.getElementById('tasksList');
+                    const items = container.querySelectorAll('.task-item[data-task-id]');
+                    const q = this.searchQuery.trim().toLowerCase();
+                    let anyVisible = false;
+                    items.forEach(item => {
+                        const titleInput = item.querySelector('.task-title');
+                        const liveText = titleInput ? titleInput.value.toLowerCase() : '';
+                        let match = true;
+                        if (this.filterTag !== 'all' && item.dataset.tag !== this.filterTag) match = false;
+                        if (this.filterPriority !== 'all' && item.dataset.priority !== this.filterPriority)
+                            match = false;
+                        if (this.filterStatus === 'done' && item.dataset.done !== 'true') match = false;
+                        if (this.filterStatus === 'active' && item.dataset.done === 'true') match = false;
+                        if (q && !liveText.includes(q)) match = false;
+                        item.classList.toggle('hidden', !match);
+                        if (match) anyVisible = true;
+                    });
+                    const emptyState = document.getElementById('tasksEmptyState');
+                    if (emptyState) emptyState.classList.toggle('hidden', anyVisible);
+                    const filtersActive = this.filterTag !== 'all' || this.filterPriority !== 'all' || this
+                        .filterStatus !== 'all' || q !== '';
+                    if (this._taskSortable) this._taskSortable.option('disabled', filtersActive);
+                    this.updateFilterBadge();
+                }
+
+                updateFilterBadge() {
+                    const badge = document.getElementById('filterCountBadge');
+                    if (!badge) return;
+                    let count = 0;
+                    if (this.filterTag !== 'all') count++;
+                    if (this.filterPriority !== 'all') count++;
+                    if (this.filterStatus !== 'all') count++;
+                    if (this.searchQuery.trim() !== '') count++;
+                    badge.textContent = count;
+                    badge.hidden = count === 0;
+                }
+
+                renderGoals() {
+                    const container = document.getElementById('goalsList');
+                    if (!this.state.goals.length) { container.innerHTML = '<div class="empty-state">هدفی ثبت نشده.</div>';
+                        return; }
+                    container.innerHTML = this.state.goals.map(goal => {
+                        const linkedTasks = this.state.tasks.filter(t => t.goalId === goal.id);
+                        const done = linkedTasks.filter(t => t.done).length;
+                        const progress = linkedTasks.length ? Math.round((done / linkedTasks.length) * 100) :
+                            0;
+                        return `<div class="task-item"><div class="task-row-main"><input type="text" class="task-title" value="${sanitizeAttr(goal.title)}" data-action="edit-goal" data-id="${goal.id}" placeholder="عنوان هدف..." aria-label="عنوان هدف"><div class="progress-bar-container" style="max-width:80px;"><div class="progress-bar-fill" style="width:${progress}%"></div></div><span style="font-size:0.8rem;">${progress}%</span><button class="btn btn-icon-only btn-danger" data-action="delete-goal" data-id="${goal.id}" aria-label="حذف هدف"><i class="fas fa-trash"></i></button></div></div>`;
+                    }).join('');
+                }
+
+                renderProjects() {
+                    const container = document.getElementById('projectsList');
+                    if (!this.state.projects.length) { container.innerHTML =
+                        '<div class="empty-state">پروژه‌ای تعریف نشده.</div>'; return; }
+                    container.innerHTML = this.state.projects.map(project => {
+                        const linkedTasks = this.state.tasks.filter(t => t.projectId === project.id);
+                        const done = linkedTasks.filter(t => t.done).length;
+                        const progress = linkedTasks.length ? Math.round((done / linkedTasks.length) * 100) :
+                            0;
+                        return `<div class="task-item"><div class="task-row-main"><input type="text" class="task-title" value="${sanitizeAttr(project.title)}" data-action="edit-project" data-id="${project.id}" placeholder="عنوان پروژه..." aria-label="عنوان پروژه"><div class="progress-bar-container" style="max-width:80px;"><div class="progress-bar-fill" style="width:${progress}%"></div></div><span style="font-size:0.8rem;">${progress}%</span><button class="btn btn-icon-only btn-danger" data-action="delete-project" data-id="${project.id}" aria-label="حذف پروژه"><i class="fas fa-trash"></i></button></div></div>`;
+                    }).join('');
+                }
+
+                renderHabits() {
+                    const container = document.getElementById('habitsList');
+                    if (!this.state.habits.length) { container.innerHTML =
+                    '<div class="empty-state">عادتی تنظیم نشده.</div>'; return; }
+                    container.innerHTML = this.state.habits.map(habit => {
+                        const doneToday = habit.dates && habit.dates[this.state.selectedDate];
+                        const streak = this.calculateStreak(habit, this.state.selectedDate);
+                        const goal = habit.goalId ? this.state.goals.find(g => g.id === habit.goalId) :
+                        null;
+                        return `<div class="task-item"><div class="task-row-main">
+                                    <span class="checkbox-hit-area"><input type="checkbox" class="checkbox-custom" ${doneToday?'checked':''} data-action="toggle-habit" data-id="${habit.id}" aria-label="ثبت انجام این عادت برای امروز"></span>
+                                    <input type="text" class="task-title" value="${sanitizeAttr(habit.title)}" data-action="edit-habit" data-id="${habit.id}" placeholder="عنوان عادت..." aria-label="عنوان عادت">
+                                    <span class="streak-badge"><i class="fas fa-fire"></i> ${streak}</span>
+                                    ${goal ? `<span class="badge badge-project"><i class="fas fa-bullseye"></i> ${sanitizeAttr(goal.title)}</span>` : ''}
+                                    <select class="select-input" data-action="change-habit-goal" data-id="${habit.id}" style="font-size:0.75rem; padding:0.2rem;" aria-label="انتخاب هدف برای عادت">
+                                        <option value="">بدون هدف</option>
+                                        ${this.state.goals.map(g=>`<option value="${g.id}" ${habit.goalId===g.id?'selected':''}>${sanitizeAttr(g.title)}</option>`).join('')}
+                                    </select>
+                                    <button class="btn btn-icon-only btn-danger" data-action="delete-habit" data-id="${habit.id}" aria-label="حذف عادت"><i class="fas fa-trash"></i></button>
+                                </div></div>`;
+                    }).join('');
+                }
+
+                renderRoutines() {
+                    const container = document.getElementById('routinesList');
+                    if (!this.state.routines.length) { container.innerHTML =
+                        '<div class="empty-state">روتینی تعریف نشده.</div>'; return; }
+                    container.innerHTML = this.state.routines.map(routine => {
+                        const doneToday = routine.dates && routine.dates[this.state.selectedDate];
+                        return `<div class="task-item"><div class="task-row-main">
+                                    <span class="checkbox-hit-area"><input type="checkbox" class="checkbox-custom" ${doneToday?'checked':''} data-action="toggle-routine" data-id="${routine.id}" aria-label="ثبت انجام این روتین برای امروز"></span>
+                                    <input type="text" class="task-title" value="${sanitizeAttr(routine.title)}" data-action="edit-routine" data-id="${routine.id}" placeholder="عنوان روتین..." aria-label="عنوان روتین">
+                                    <button class="btn btn-icon-only btn-danger" data-action="delete-routine" data-id="${routine.id}" aria-label="حذف روتین"><i class="fas fa-trash"></i></button>
+                                </div></div>`;
+                    }).join('');
+                }
+
+                renderBrainDump() {
+                    const container = document.getElementById('brainDumpList');
+                    if (!this.state.brainDump.length) { container.innerHTML =
+                        '<div class="empty-state">یادداشتی وجود ندارد.</div>'; return; }
+                    container.innerHTML = this.state.brainDump.map(b =>
+                        `<div class="task-item"><div class="task-row-main"><input type="text" class="task-title" value="${sanitizeAttr(b.text)}" data-action="edit-braindump" data-id="${b.id}" placeholder="یادداشت سریع..." aria-label="متن یادداشت سریع"><button class="btn btn-icon-only btn-danger" data-action="delete-braindump" data-id="${b.id}" aria-label="حذف یادداشت"><i class="fas fa-trash"></i></button></div></div>`
+                        ).join('');
+                }
+
+                renderJournal() {
+                    const entry = this.state.journal[this.state.selectedDate] || { success: '', challenge: '',
+                        next: '' };
+                    document.getElementById('journalSuccess').value = entry.success || '';
+                    document.getElementById('journalChallenge').value = entry.challenge || '';
+                    document.getElementById('journalNext').value = entry.next || '';
+                }
+
+                updateAnalytics() {
+                    const dayTasks = this.state.tasks.filter(t => t.date === this.state.selectedDate);
+                    const total = dayTasks.length;
+                    const done = dayTasks.filter(t => t.done).length;
+                    const progress = total ? Math.round((done / total) * 100) : 0;
+                    document.getElementById('statTaskProgress').textContent = `${progress}%`;
+                    document.getElementById('overallProgressBar').style.width = `${progress}%`;
+                    const streaks = this.state.habits.map(h => this.calculateStreak(h, this.state.selectedDate));
+                    const avgStreak = streaks.length ? Math.round(streaks.reduce((a, b) => a + b, 0) / streaks
+                        .length) : 0;
+                    document.getElementById('statHabitStreak').textContent = avgStreak;
+                    document.getElementById('statRoutineDone').textContent = this.state.routines.filter(r => r
+                        .dates && r.dates[this.state.selectedDate]).length;
+                    document.getElementById('statPomodorosToday').textContent = (this.state.pomodoroLog && this
+                        .state.pomodoroLog[this.state.selectedDate]) || 0;
+
+                    const endDate = new Date(this.state.selectedDate + 'T00:00:00');
+                    const weekStart = new Date(endDate);
+                    weekStart.setDate(weekStart.getDate() - 6);
+                    const monthStart = new Date(endDate);
+                    monthStart.setDate(monthStart.getDate() - 29);
+                    const weekDates = this.getDateRange(weekStart, endDate);
+                    const monthDates = this.getDateRange(monthStart, endDate);
+
+                    document.getElementById('statWeekTasks').textContent = this.countTasksDone(weekDates);
+                    document.getElementById('statWeekHabits').textContent = `${this.calcHabitCompletion(weekDates)}%`;
+                    document.getElementById('statWeekPomodoros').textContent = this.sumPomodoros(weekDates);
+                    document.getElementById('statMonthTasks').textContent = this.countTasksDone(monthDates);
+                    document.getElementById('statMonthHabits').textContent =
+                    `${this.calcHabitCompletion(monthDates)}%`;
+                    document.getElementById('statMonthPomodoros').textContent = this.sumPomodoros(monthDates);
+
+                    this.renderTasksChart(weekDates, 'weekTasksChart');
+                    this.renderTasksChart(monthDates, 'monthTasksChart');
+                }
+
+                renderTasksChart(dates, containerId) {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+                    const values = dates.map(date => this.state.tasks.filter(t => t.date === date && t.done).length);
+                    const hasData = values.some(value => value > 0);
+                    if (!hasData) {
+                        container.innerHTML =
+                            '<div class="chart-empty">در این بازه هنوز کار تکمیل‌شده‌ای ثبت نشده است.</div>';
+                        return;
+                    }
+                    const max = Math.max(...values, 1);
+                    const isMonthly = dates.length > 7;
+                    container.innerHTML = values.map((val, index) => {
+                        const height = val > 0 ? Math.max((val / max) * 100, 8) : 0;
+                        const date = new Date(dates[index] + 'T00:00:00');
+                        const shortDate = `${date.getMonth() + 1}/${date.getDate()}`;
+                        const showDate = !isMonthly || index % 5 === 0 || index === dates.length - 1;
+                        const valueLabel = val > 0 ? toPersianDigits(val) : '';
+                        const dateLabel = showDate ? toPersianDigits(shortDate) : '';
+                        return `<div class="chart-column" title="${dates[index]}: ${val} کار تکمیل‌شده">
+                                    <div class="chart-value">${valueLabel}</div>
+                                    <div class="chart-bar-track"><div class="chart-bar" style="height:${height}%;"></div></div>
+                                    <div class="chart-date">${dateLabel}</div>
+                                </div>`;
+                    }).join('');
+                }
+
+                getDateRange(startDate, endDate) {
+                    const dates = [];
+                    let d = new Date(startDate);
+                    d.setHours(0, 0, 0, 0);
+                    const end = new Date(endDate);
+                    end.setHours(0, 0, 0, 0);
+                    while (d <= end) { dates.push(getLocalDateStr(d));
+                        d.setDate(d.getDate() + 1);
+                        d.setHours(0, 0, 0, 0); }
+                    return dates;
+                }
+
+                countTasksDone(dates) { return this.state.tasks.filter(t => t.done && dates.includes(t.date)).length; }
+
+                calcHabitCompletion(dates) {
+                    const totalHabits = this.state.habits.length;
+                    if (!totalHabits) return 0;
+                    let totalDone = 0;
+                    for (const habit of this.state.habits) {
+                        for (const date of dates) {
+                            if (habit.dates && habit.dates[date]) totalDone++;
+                        }
+                    }
+                    const possible = totalHabits * dates.length;
+                    return possible ? Math.round((totalDone / possible) * 100) : 0;
+                }
+
+                sumPomodoros(dates) { let sum = 0; for (const date of dates) sum += (this.state.pomodoroLog && this
+                        .state.pomodoroLog[date]) || 0; return sum; }
+
+                calculateStreak(habit, dateStr) {
+                    let streak = 0;
+                    const current = new Date(dateStr + 'T00:00:00');
+                    while (habit.dates && habit.dates[getLocalDateStr(current)]) { streak++;
+                        current.setDate(current.getDate() - 1); }
+                    return streak;
+                }
+
+                getNextDate(dateStr, recurrence) {
+                    const d = new Date(dateStr + 'T00:00:00');
+                    if (Number.isNaN(d.getTime())) return null;
+                    if (recurrence === 'daily') d.setDate(d.getDate() + 1);
+                    else if (recurrence === 'weekly') d.setDate(d.getDate() + 7);
+                    else if (recurrence === 'monthly') {
+                        const originalDay = d.getDate();
+                        d.setDate(1);
+                        d.setMonth(d.getMonth() + 1);
+                        const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+                        d.setDate(Math.min(originalDay, lastDay));
+                    } else return null;
+                    d.setHours(0, 0, 0, 0);
+                    return getLocalDateStr(d);
+                }
+
+                initTaskSortable() {
+                    const tasksList = document.getElementById('tasksList');
+                    if (!tasksList || typeof Sortable === 'undefined') return;
+                    this._taskSortable = new Sortable(tasksList, {
+                        handle: '.drag-handle',
+                        animation: 150,
+                        delay: 100,
+                        delayOnTouchOnly: true,
+                        touchStartThreshold: 5,
+                        ghostClass: 'task-item-ghost',
+                        onEnd: () => this.commitDomOrderToState()
+                    });
+                }
+
+                commitDomOrderToState() {
+                    const list = document.getElementById('tasksList');
+                    const idsInOrder = [...list.querySelectorAll('.task-item[data-task-id]')].map(el => el.dataset
+                        .taskId);
+                    if (!idsInOrder.length) return;
+                    const currentDayTasks = this.state.tasks.filter(t => t.date === this.state.selectedDate);
+                    const otherTasks = this.state.tasks.filter(t => t.date !== this.state.selectedDate);
+                    const reordered = idsInOrder.map(id => currentDayTasks.find(t => t.id === id)).filter(Boolean);
+                    const reorderedIds = new Set(reordered.map(t => t.id));
+                    const remaining = currentDayTasks.filter(t => !reorderedIds.has(t.id));
+                    this.state.tasks = [...otherTasks, ...reordered, ...remaining];
+                    this.recordHistoryState();
+                    this.showToast('ترتیب کارها به‌روزرسانی شد');
+                }
+
+                bindEvents() {
+                    document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+                    document.getElementById('undoBtn').addEventListener('click', () => this.undo());
+                    document.getElementById('redoBtn').addEventListener('click', () => this.redo());
+                    document.getElementById('exportBtn').addEventListener('click', () => this.exportJSON());
+                    document.getElementById('importBtn').addEventListener('click', () => document.getElementById(
+                        'importFileInput').click());
+                    document.getElementById('importFileInput').addEventListener('change', (e) => this.importJSON(e));
+                    document.getElementById('enableNotifBtn').addEventListener('click', () => this
+                        .requestNotificationPermission());
+                    document.getElementById('backupNowBtn').addEventListener('click', () => this.autoBackup());
+                    document.getElementById('resetBtn').addEventListener('click', () => {
+                        if (confirm('آیا از بازنشانی کلیه داده‌ها اطمینان دارید؟')) {
+                            this.state = getInitialState();
+                            this.history = [];
+                            this.historyIndex = -1;
+                            this.expandedTasks.clear();
+                            this.resetTimerFull();
+                            this.recordHistoryState();
+                            this.renderAll();
+                            this.showToast('سیستم با موفقیت بازنشانی شد', 'danger');
+                        }
+                    });
+
+                    document.getElementById('prevWeekBtn').addEventListener('click', () => {
+                        const d = new Date(this.state.selectedDate + 'T00:00:00');
+                        d.setDate(d.getDate() - 7);
+                        this.state.selectedDate = getLocalDateStr(d);
+                        this.recordHistoryState();
+                        this.renderAll();
+                    });
+                    document.getElementById('nextWeekBtn').addEventListener('click', () => {
+                        const d = new Date(this.state.selectedDate + 'T00:00:00');
+                        d.setDate(d.getDate() + 7);
+                        this.state.selectedDate = getLocalDateStr(d);
+                        this.recordHistoryState();
+                        this.renderAll();
+                    });
+                    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+                        const d = new Date(this.state.selectedDate + 'T00:00:00');
+                        if (this.jalaliUIEnabled) {
+                            const j = gregorianToJalali(d);
+                            if (j) {
+                                const newMonth = j.jm === 1 ? 12 : j.jm - 1;
+                                const newYear = j.jm === 1 ? j.jy - 1 : j.jy;
+                                this.state.selectedDate = getLocalDateStr(jalaliToGregorian(newYear,
+                                newMonth, 1));
+                            } else { d.setDate(1);
+                                d.setMonth(d.getMonth() - 1);
+                                this.state.selectedDate = getLocalDateStr(d); }
+                        } else { d.setDate(1);
+                            d.setMonth(d.getMonth() - 1);
+                            this.state.selectedDate = getLocalDateStr(d); }
+                        this.recordHistoryState();
+                        this.renderAll();
+                    });
+                    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+                        const d = new Date(this.state.selectedDate + 'T00:00:00');
+                        if (this.jalaliUIEnabled) {
+                            const j = gregorianToJalali(d);
+                            if (j) {
+                                const newMonth = j.jm === 12 ? 1 : j.jm + 1;
+                                const newYear = j.jm === 12 ? j.jy + 1 : j.jy;
+                                this.state.selectedDate = getLocalDateStr(jalaliToGregorian(newYear,
+                                newMonth, 1));
+                            } else { d.setDate(1);
+                                d.setMonth(d.getMonth() + 1);
+                                this.state.selectedDate = getLocalDateStr(d); }
+                        } else { d.setDate(1);
+                            d.setMonth(d.getMonth() + 1);
+                            this.state.selectedDate = getLocalDateStr(d); }
+                        this.recordHistoryState();
+                        this.renderAll();
+                    });
+
+                    document.getElementById('dayTabsContainer').addEventListener('click', (e) => {
+                        const tab = e.target.closest('.day-tab');
+                        if (tab) { this.state.selectedDate = tab.dataset.date;
+                            this.recordHistoryState();
+                            this.renderAll(); }
+                    });
+                    document.getElementById('todayBtn').addEventListener('click', () => { this.state.selectedDate =
+                            getLocalDateStr();
+                        this.recordHistoryState();
+                        this.renderAll(); });
+
+                    document.getElementById('taskSearchInput').addEventListener('input', (e) => { this.searchQuery = e
+                            .target.value;
+                        this.applyTaskFilters(); });
+                    document.getElementById('tagFilter').addEventListener('change', (e) => { this.filterTag = e.target
+                            .value;
+                        this.applyTaskFilters(); });
+                    document.getElementById('priorityFilter').addEventListener('change', (e) => { this.filterPriority =
+                            e.target.value;
+                        this.applyTaskFilters(); });
+                    document.getElementById('statusFilter').addEventListener('change', (e) => { this.filterStatus = e
+                            .target.value;
+                        this.applyTaskFilters(); });
+
+                    this.initTaskSortable();
+                    document.getElementById('mobileFilterBtn').addEventListener('click', () => this
+                    .openFilterSheet());
+                    document.getElementById('filterSheetBackdrop').addEventListener('click', () => this
+                        .closeFilterSheet());
+                    document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                        btn.addEventListener('click', () => this.setActiveMobileTab(btn.dataset.tab));
+                    });
+                    window.matchMedia('(max-width: 1023px)').addEventListener('change', () => this
+                        .syncMobileTabVisibility());
+
+                    document.querySelectorAll('.rail-btn[data-scroll-target]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const target = document.querySelector(
+                                `[data-tab-group="${btn.dataset.scrollTarget}"]`);
+                            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+                    });
+
+                    document.getElementById('addTaskBtn').addEventListener('click', () => {
+                        const id = makeId();
+                        this.state.tasks.push({ id, text: '', done: false, date: this.state.selectedDate,
+                            tag: 'personal', priority: 'med', recurrence: 'none', goalId: '',
+                            projectId: '', note: '' });
+                        this.expandedTasks.add(id);
+                        this.recordHistoryState();
+                        this.renderTasks();
+                        this.updateAnalytics();
+                        const input = document.querySelector(
+                            `.task-item[data-task-id="${id}"] .task-title`);
+                        if (input) input.focus();
+                    });
+                    document.getElementById('addGoalBtn').addEventListener('click', () => { this.state.goals.push({ id: makeId(),
+                            title: '' });
+                        this.recordHistoryState();
+                        this.renderGoals(); });
+                    document.getElementById('addProjectBtn').addEventListener('click', () => { this.state.projects.push({ id: makeId(),
+                            title: '' });
+                        this.recordHistoryState();
+                        this.renderProjects(); });
+                    document.getElementById('addHabitBtn').addEventListener('click', () => { this.state.habits.push({ id: makeId(),
+                            title: '', dates: {}, goalId: '' });
+                        this.recordHistoryState();
+                        this.renderHabits(); });
+                    document.getElementById('addRoutineBtn').addEventListener('click', () => { this.state.routines.push({ id: makeId(),
+                            title: '', dates: {} });
+                        this.recordHistoryState();
+                        this.renderRoutines(); });
+                    document.getElementById('addBrainDumpBtn').addEventListener('click', () => { this.state.brainDump
+                            .push({ id: makeId(), text: '' });
+                        this.recordHistoryState();
+                        this.renderBrainDump(); });
+
+                    document.addEventListener('change', (e) => {
+                        const action = e.target.dataset.action;
+                        const id = e.target.dataset.id;
+                        if (!action || !id) return;
+                        if (action === 'toggle-task') {
+                            const task = this.state.tasks.find(t => t.id === id);
+                            if (task) {
+                                task.done = e.target.checked;
+                                if (task.done && task.recurrence !== 'none') {
+                                    const linkedNextExists = task._nextOccurrenceId && this.state
+                                        .tasks.some(t => t.id === task._nextOccurrenceId);
+                                    if (!linkedNextExists) {
+                                        const nextDate = this.getNextDate(task.date, task
+                                        .recurrence);
+                                        if (nextDate) {
+                                            const nextId = makeId();
+                                            const nextTask = { ...task,
+                                                id: nextId,
+                                                date: nextDate,
+                                                done: false,
+                                                note: '',
+                                                _nextOccurrenceId: null
+                                            };
+                                            task._nextOccurrenceId = nextId;
+                                            this.state.tasks.push(nextTask);
+                                            this.showToast(
+                                                `نسخه بعدی این کار برای ${nextDate} ساخته شد`
+                                                );
+                                        }
+                                    }
+                                }
+                                this.recordHistoryState();
+                                this.renderTasks();
+                                this.updateAnalytics();
+                            }
+                        } else if (action === 'toggle-habit') {
+                            const habit = this.state.habits.find(h => h.id === id);
+                            if (habit) {
+                                if (!habit.dates) habit.dates = {};
+                                if (e.target.checked) habit.dates[this.state.selectedDate] = true;
+                                else delete habit.dates[this.state.selectedDate];
+                                this.recordHistoryState();
+                                this.renderHabits();
+                                this.updateAnalytics();
+                            }
+                        } else if (action === 'toggle-routine') {
+                            const routine = this.state.routines.find(r => r.id === id);
+                            if (routine) {
+                                if (!routine.dates) routine.dates = {};
+                                if (e.target.checked) routine.dates[this.state.selectedDate] = true;
+                                else delete routine.dates[this.state.selectedDate];
+                                this.recordHistoryState();
+                                this.renderRoutines();
+                                this.updateAnalytics();
+                            }
+                        } else if (action === 'change-tag') { const task = this.state.tasks.find(t => t
+                                .id === id); if (task) { task.tag = e.target.value;
+                                this.recordHistoryState();
+                                this.renderTasks(); } } else if (action === 'change-priority') { const
+                                task = this.state.tasks.find(t => t.id === id); if (task) { task
+                                    .priority = e.target.value;
+                                this.recordHistoryState();
+                                this.renderTasks(); } } else if (action === 'change-recurrence') { const
+                                task = this.state.tasks.find(t => t.id === id); if (task) { task
+                                    .recurrence = e.target.value;
+                                this.recordHistoryState();
+                                this.renderTasks(); } } else if (action === 'change-project') { const
+                                task = this.state.tasks.find(t => t.id === id); if (task) { task
+                                    .projectId = e.target.value;
+                                this.recordHistoryState();
+                                this.renderTasks(); } } else if (action === 'change-habit-goal') { const
+                                habit = this.state.habits.find(h => h.id === id); if (habit) { habit
+                                    .goalId = e.target.value;
+                                this.recordHistoryState();
+                                this.renderHabits(); } }
+                    });
+
+                    document.addEventListener('input', (e) => {
+                        const action = e.target.dataset.action;
+                        const id = e.target.dataset.id;
+                        if (action === 'edit-task') { const task = this.state.tasks.find(t => t
+                                .id === id); if (task) task.text = e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (action === 'edit-goal') { const
+                                goal = this.state.goals.find(g => g.id === id); if (goal) goal.title = e
+                                .target.value;
+                            this.debouncedHistorySnapshot(); } else if (action === 'edit-project') { const
+                                project = this.state.projects.find(p => p.id === id); if (project) project
+                                .title = e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (action === 'edit-habit') { const
+                                habit = this.state.habits.find(h => h.id === id); if (habit) habit.title =
+                                e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (action === 'edit-routine') { const
+                                routine = this.state.routines.find(r => r.id === id); if (routine) routine
+                                .title = e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (action === 'edit-braindump') { const
+                                dump = this.state.brainDump.find(b => b.id === id); if (dump) dump.text = e
+                                .target.value;
+                            this.debouncedHistorySnapshot(); } else if (e.target.id === 'journalSuccess') {
+                            this.getJournalEntry().success = e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (e.target.id === 'journalChallenge') {
+                            this.getJournalEntry().challenge = e.target.value;
+                            this.debouncedHistorySnapshot(); } else if (e.target.id === 'journalNext') {
+                            this.getJournalEntry().next = e.target.value;
+                            this.debouncedHistorySnapshot(); }
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        const btn = e.target.closest('button');
+                        if (!btn) return;
+                        const action = btn.dataset.action;
+                        const id = btn.dataset.id;
+                        if (action === 'delete-task') {
+                            if (confirm('این کار حذف شود؟')) { this.state.tasks = this.state.tasks
+                                    .filter(t => t.id !== id);
+                                this.expandedTasks.delete(id);
+                                this.recordHistoryState();
+                                this.renderTasks();
+                                this.updateAnalytics(); }
+                        } else if (action === 'delete-goal') {
+                            if (confirm('این هدف حذف شود؟')) {
+                                this.state.goals = this.state.goals.filter(g => g.id !== id);
+                                this.state.tasks.forEach(t => { if (t.goalId === id) t.goalId =
+                                    ''; });
+                                this.state.habits.forEach(h => { if (h.goalId === id) h.goalId =
+                                    ''; });
+                                this.recordHistoryState();
+                                this.renderGoals();
+                                this.renderTasks();
+                                this.renderHabits();
+                            }
+                        } else if (action === 'delete-project') {
+                            if (confirm('این پروژه حذف شود؟')) {
+                                this.state.projects = this.state.projects.filter(p => p.id !==
+                                id);
+                                this.state.tasks.forEach(t => { if (t.projectId === id) t
+                                    .projectId = ''; });
+                                this.recordHistoryState();
+                                this.renderProjects();
+                                this.renderTasks();
+                            }
+                        } else if (action === 'delete-habit') {
+                            if (confirm('این عادت حذف شود؟')) { this.state.habits = this.state
+                                    .habits.filter(h => h.id !== id);
+                                this.recordHistoryState();
+                                this.renderHabits(); }
+                        } else if (action === 'delete-routine') {
+                            if (confirm('این روتین حذف شود؟')) { this.state.routines = this
+                                    .state.routines.filter(r => r.id !== id);
+                                this.recordHistoryState();
+                                this.renderRoutines(); }
+                        } else if (action === 'delete-braindump') {
+                            if (confirm('این یادداشت حذف شود؟')) { this.state.brainDump = this
+                                    .state.brainDump.filter(b => b.id !== id);
+                                this.recordHistoryState();
+                                this.renderBrainDump(); }
+                        } else if (action === 'note-task') { this.openNoteModal(id); } else if (action ===
+                            'toggle-advanced') {
+                            if (this.expandedTasks.has(id)) this.expandedTasks.delete(id);
+                            else this.expandedTasks.add(id);
+                            this.renderTasks();
+                        }
+                    });
+
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this
+                    .closeNoteModal());
+                    document.getElementById('saveModalNoteBtn').addEventListener('click', () => {
+                        if (this.activeModalTaskId) {
+                            const task = this.state.tasks.find(t => t.id === this
+                            .activeModalTaskId);
+                            if (task) { task.note = document.getElementById('modalNoteTextarea')
+                                    .value;
+                                this.recordHistoryState();
+                                this.closeNoteModal();
+                                this.showToast('یادداشت ذخیره شد'); }
+                        }
+                    });
+                    document.getElementById('noteModal').addEventListener('click', (e) => { if (e.target
+                            .id === 'noteModal') this.closeNoteModal(); });
+
+                    document.querySelectorAll('.timer-mode-tab').forEach(tab => tab.addEventListener('click', () =>
+                        this.setTimerMode(tab.dataset.mode)));
+                    document.getElementById('startPauseTimerBtn').addEventListener('click', () => this.timer
+                        .isRunning ? this.pauseTimer() : this.startTimer());
+                    document.getElementById('resetTimerBtn').addEventListener('click', () => this.resetTimer());
+                    document.getElementById('skipTimerBtn').addEventListener('click', () => this.skipTimer());
+
+                    const handleTimerSettingChange = (e, key, timerKey) => {
+                        const input = e.target;
+                        const raw = input.value;
+                        let v;
+                        if (key === 'longBreakInterval') {
+                            v = this.parseTimerSetting(raw, 1, 12, 4);
+                        } else {
+                            const defaultVal = { workDuration: 25, shortBreakDuration: 5,
+                                longBreakDuration: 15 } [key] || 25;
+                            const maxVal = { workDuration: 120, shortBreakDuration: 60,
+                                longBreakDuration: 60 } [key] || 120;
+                            v = this.parseTimerSetting(raw, 1, maxVal, defaultVal);
+                        }
+                        input.value = v;
+                        this.timer[timerKey] = v;
+                        if (!this.state.timerSettings) this.state.timerSettings = {};
+                        this.state.timerSettings[key] = v;
+                        this.debouncedPersist();
+                        this.recordHistoryState();
+                        if (!this.timer.isRunning) {
+                            if (this.timer.mode === 'work') this.timer.timeLeft = this.timer
+                                .workDuration * 60;
+                            else if (this.timer.mode === 'shortBreak') this.timer.timeLeft = this
+                                .timer.shortBreakDuration * 60;
+                            else if (this.timer.mode === 'longBreak') this.timer.timeLeft = this
+                                .timer.longBreakDuration * 60;
+                            this.timer.totalTime = this.timer.timeLeft;
+                            this.renderTimer();
+                        }
+                    };
+                    document.getElementById('workDuration').addEventListener('change', (e) => {
+                        handleTimerSettingChange(e, 'workDuration', 'workDuration');
+                    });
+                    document.getElementById('shortBreakDuration').addEventListener('change', (e) => {
+                        handleTimerSettingChange(e, 'shortBreakDuration', 'shortBreakDuration');
+                    });
+                    document.getElementById('longBreakDuration').addEventListener('change', (e) => {
+                        handleTimerSettingChange(e, 'longBreakDuration', 'longBreakDuration');
+                    });
+                    document.getElementById('longBreakInterval').addEventListener('change', (e) => {
+                        handleTimerSettingChange(e, 'longBreakInterval', 'longBreakInterval');
+                    });
+
+                    document.addEventListener('visibilitychange', () => {
+                        this.handleVisibilityChange();
+                        if (document.hidden) this.flushStateSync();
+                    });
+
+                    window.addEventListener('keydown', (e) => {
+                        if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault();
+                            this.undo(); } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e
+                                .preventDefault();
+                            this.redo(); } else if (e.key === 'Escape') {
+                            this.closeNoteModal();
+                            this.closeJalaliPopover();
+                            if (document.getElementById('filterFieldsWrap').classList.contains(
+                                    'sheet-open')) this.closeFilterSheet();
+                        } else if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault();
+                            document.getElementById('addTaskBtn').click(); }
+                    });
+
+                    window.addEventListener('pagehide', () => this.flushStateSync());
+                    window.addEventListener('beforeunload', () => this.flushStateSync());
+                }
+
+                flushStateSync() {
+                    this.debouncedPersist.cancel();
+                    if (this.debouncedHistorySnapshot && this.debouncedHistorySnapshot.cancel) this
+                        .debouncedHistorySnapshot.cancel();
+                    this.storage.syncSet('state', 'main', { ...this.state });
+                }
+
+                openFilterSheet() {
+                    const wrap = document.getElementById('filterFieldsWrap');
+                    wrap.classList.add('sheet-open');
+                    wrap.setAttribute('role', 'dialog');
+                    wrap.setAttribute('aria-modal', 'true');
+                    wrap.setAttribute('aria-label', 'فیلتر کارها');
+                    document.getElementById('filterSheetBackdrop').classList.add('active');
+                    const firstSelect = wrap.querySelector('select');
+                    if (firstSelect) firstSelect.focus();
+                    wrap.addEventListener('keydown', this._filterSheetTrapHandler = (e) => {
+                        if (e.key !== 'Tab') return;
+                        const focusables = [...wrap.querySelectorAll('select')];
+                        if (!focusables.length) return;
+                        const first = focusables[0],
+                            last = focusables[focusables.length - 1];
+                        if (e.shiftKey && document.activeElement === first) { e.preventDefault();
+                            last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e
+                                .preventDefault();
+                            first.focus(); }
+                    });
+                }
+
+                closeFilterSheet() {
+                    const wrap = document.getElementById('filterFieldsWrap');
+                    wrap.classList.remove('sheet-open');
+                    wrap.removeAttribute('role');
+                    wrap.removeAttribute('aria-modal');
+                    wrap.removeAttribute('aria-label');
+                    document.getElementById('filterSheetBackdrop').classList.remove('active');
+                    if (this._filterSheetTrapHandler) { wrap.removeEventListener('keydown', this
+                            ._filterSheetTrapHandler);
+                        this._filterSheetTrapHandler = null; }
+                    document.getElementById('mobileFilterBtn').focus();
+                }
+
+                setActiveMobileTab(tab) {
+                    this.activeMobileTab = tab;
+                    if (!this.state.uiPrefs) this.state.uiPrefs = {};
+                    this.state.uiPrefs.activeMobileTab = tab;
+                    this.debouncedPersist();
+                    this.syncMobileTabVisibility();
+                }
+
+                syncMobileTabVisibility() {
+                    const tab = this.activeMobileTab || (this.state.uiPrefs && this.state.uiPrefs
+                        .activeMobileTab) || 'today';
+                    document.querySelectorAll('[data-tab-group]').forEach(el => el.classList.toggle('tab-active', el
+                        .dataset.tabGroup === tab));
+                    document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                        const isActive = btn.dataset.tab === tab;
+                        btn.classList.toggle('active', isActive);
+                        btn.setAttribute('aria-current', isActive ? 'true' : 'false');
+                        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                    });
+                }
+
+                parseTimerSetting(value, min, max, defaultVal) {
+                    const parsed = parseInt(value, 10);
+                    return Number.isFinite(parsed) ? Math.min(max, Math.max(min, parsed)) : defaultVal;
+                }
+
+                getJournalEntry() {
+                    const date = this.state.selectedDate;
+                    if (!this.state.journal[date] || typeof this.state.journal[date] !== 'object') {
+                        this.state.journal[date] = { success: '', challenge: '', next: '' };
+                    }
+                    return this.state.journal[date];
+                }
+
+                openNoteModal(id) {
+                    const task = this.state.tasks.find(t => t.id === id);
+                    if (!task) return;
+                    this.activeModalTaskId = id;
+                    document.getElementById('modalNoteTextarea').value = task.note || '';
+                    document.getElementById('noteModal').classList.add('active');
+                    document.getElementById('modalNoteTextarea').focus();
+                }
+
+                closeNoteModal() { document.getElementById('noteModal').classList.remove('active');
+                    this.activeModalTaskId = null; }
+
+                exportJSON() {
+                    const dataStr = JSON.stringify(this.state, null, 2);
+                    const blob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `planner-backup-${this.state.selectedDate}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    this.showToast('فایل پشتیبان دانلود شد');
+                }
+
+                importJSON(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const imported = JSON.parse(event.target.result);
+                            if (imported && typeof imported === 'object') {
+                                this.state = deepMerge(getInitialState(), imported);
+                                if (!isValidDateString(this.state.selectedDate)) this.state
+                                    .selectedDate = getLocalDateStr();
+                                this.normalizeState();
+                                this.applyStateToTimer();
+                                this.expandedTasks.clear();
+                                this.history = [];
+                                this.historyIndex = -1;
+                                this.recordHistoryState();
+                                this.renderAll();
+                                this.showToast('داده‌ها با موفقیت وارد شدند');
+                            } else throw new Error('ساختار نامعتبر');
+                        } catch (err) { this.showToast('خطا در خواندن فایل!', 'danger'); }
+                    };
+                    reader.readAsText(file);
+                    e.target.value = '';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => new PlannerApp());
+        })();
+    </script>
+</body>
+</html>
